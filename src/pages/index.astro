@@ -1,26 +1,32 @@
 ---
 import Layout from '@layouts/Default.astro';
-import RecentBlogPosts from '@components/generic/RecentBlogPosts.astro';
+import RecentBlogPosts from '@components/generic/RecentBlogPosts.jsx';
 import MobileSocials from '@components/home/MobileSocials.astro';
-import { Pill } from '@eliancodes/brutal-ui';
+import { Hero } from '@components/home/DynamicText';
+// import { Pill } from '@eliancodes/brutal-ui';
 import { Button } from '@eliancodes/brutal-ui';
 import { Card } from '@eliancodes/brutal-ui';
 
-const builtWith = [
-  { name: 'Astro', url: 'https://astro.build/' },
-  { name: 'UnoCSS', url: 'https://uno.antfu.me/' },
-  {
-    name: 'Content Collections',
-    url: 'https://docs.astro.build/en/guides/content-collections/',
-  },
-  { name: 'RSS', url: 'https://docs.astro.build/en/guides/rss/' },
-  {
-    name: 'Sitemap',
-    url: 'https://docs.astro.build/en/guides/integrations-guide/sitemap/',
-  },
-  { name: 'Vercel', url: 'https://vercel.com' },
-  { name: 'TypeScript', url: 'https://www.typescriptlang.org/' },
-];
+// import '@fontsource/pacifico';
+
+import { Image } from "astro:assets";
+import headshot from "../assets/profile.jpg";
+
+// const builtWith = [
+//   { name: 'Astro', url: 'https://astro.build/' },
+//   { name: 'UnoCSS', url: 'https://uno.antfu.me/' },
+//   {
+//     name: 'Content Collections',
+//     url: 'https://docs.astro.build/en/guides/content-collections/',
+//   },
+//   { name: 'RSS', url: 'https://docs.astro.build/en/guides/rss/' },
+//   {
+//     name: 'Sitemap',
+//     url: 'https://docs.astro.build/en/guides/integrations-guide/sitemap/',
+//   },
+//   { name: 'Vercel', url: 'https://vercel.com' },
+//   { name: 'TypeScript', url: 'https://www.typescriptlang.org/' },
+// ];
 ---
 
 <Layout
@@ -28,68 +34,51 @@ const builtWith = [
   pageTitle='Brutal Theme | Home'
   description='Brutal is a minimalistic, neobrutalism theme for Astro.'
 >
-  <main class='bg-pink p-6'>
-    <MobileSocials />
-    <section id='about' class='grid md:grid-cols-8 gap-8 mt-4'>
-      <h2 class='hidden'>About Brutal</h2>
-      <div class='col-span-4'>
-        <Card>
-          <div class='flex flex-col justify-between items-start gap-4'>
-            <p class='mt-4 outfit text-2xl md:text-5xl lg:text-7xl'>
-              Brutal theme for <a
-                class='text-white'
-                target='_blank'
-                href='https://astro.build/'>Astro</a
-              >
-            </p>
-            <p class='mt-2 outfit text-xl md:text-3xl lg:text-5xl'>
-              A minimalistic, neobrutalism theme for Astro.
-            </p>
-            <Button target={'_self'} href='/blog/'>
-              Check out the blog &rarr;
-            </Button>
-          </div>
-        </Card>
-      </div>
-      <div class='col-span-2'>
-        <Card>
-          <h2 class='text-2xl md:text-4xl lg:text-6xl mb-8 dm-serif'>
-            Brutal is built with
-          </h2>
-          <ul class='flex gap-4 flex-wrap'>
-            {
-              builtWith.map((item) => (
-                <li>
-                  <Pill>
-                    <a
-                      class='sanchez'
-                      href={item.url}
-                      target='_blank'
-                      title={`Go to ${item.name}`}
-                    >
-                      {item.name}
-                    </a>
-                  </Pill>
-                </li>
-              ))
-            }
-          </ul>
-        </Card>
-      </div>
-      <div class='col-span-2'>
-        <Card>
-          <h2 class='text-2xl md:text-4xl lg:text-6xl mb-4 dm-serif'>
-            What is Brutal?
-          </h2>
-          <p class='poppins'>
-            Brutal is a theme built with Astro, UnoCSS by <a
-              href='https://www.elian.codes/'>Elian</a
-            >. It's a simple, fast, and modern theme that is easy to use and
-            customize. Mainly meant to power blogs and personal websites.
-          </p>
-        </Card>
-      </div>
-    </section>
-    <RecentBlogPosts />
+<main class='bg-pink p-6'>
+  <MobileSocials />
+
+  <section id='about' class='grid grid-flow-row sm:grid-cols-3 gap-4 mt-4 justify-stretch'>
+    <h2 class='hidden'>About Brutal</h2>
+    <div class='sm:col-span-2'>
+      <Card>
+        <div class='flex flex-col justify-between items-start gap-4'>
+          <Hero client:load></Hero>
+          <Button target={'_blank'} href='src/assets/resume.txt'>
+            View my resume &rarr;
+          </Button>
+        </div>
+      </Card>
+    </div>
+
+
+    <div class="max-h-[300px]">
+
+      <Image
+		class="object-cover h-full w-full rounded-lg border-3 border-black card-shadow"
+		src={headshot}
+		alt="Elian Van Cutsem"
+		width={headshot.width}
+		height={headshot.height}
+	/>
+</div>
+<div class='sm:col-span-3'>
+  <Card>
+    <h2 class='sanchez text-2xl md:text-4xl lg:text-6xl mb-4 dm-serif'>
+      Who am I?
+    </h2>
+    <p class='poppins'>
+      I'm a passionate Senior Data Scientist with a strong analytical mind and a knack for translating complex data into actionable insights. <br/>
+      I hold a Master's degree in Data Science from <b> MIT</b> and a Bachelor's degree in <em>Computer Science</em> from [University Name]. 
+      Throughout my career, I've thrived in utilizing various tools and frameworks, including machine learning libraries like TensorFlow and PyTorch, 
+      for building robust data pipelines and predictive models. Currently, I work at [Company Name] in [City, State] where I leverage my data expertise to solve real-world challenges and contribute to the company's success. Outside of work, I find enjoyment in [Your Hobby]. This activity allows me to [ Briefly mention how your hobby benefits you, e.g., unwind, explore new ideas, etc.]. 
+    </p>
+  </Card>
+</div>
+</section>
+<RecentBlogPosts client:load/>
   </main>
 </Layout>
+
+<style>
+
+</style>
