@@ -1,4 +1,5 @@
 ---
+import '@fontsource/righteous';
 interface Props {
   pageTitle?: string;
 }
@@ -69,3 +70,10 @@ const { pageTitle } = Astro.props;
     </ul>
   </nav>
 </header>
+
+
+<style>
+.righteous {
+  font-family: 'Righteous', system-ui;
+}
+</style>
