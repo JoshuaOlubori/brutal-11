@@ -7,6 +7,7 @@ tags:
   - TypeScript
   - Astro
   - Web Development
+img: 'astro.jpeg'
 imgUrl: '/src/assets/astro.jpeg'
 layout: ../../layouts/BlogPost.astro
 category: Notebook

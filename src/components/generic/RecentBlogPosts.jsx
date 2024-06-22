@@ -8,6 +8,20 @@ import BrutalPill from '@components/generic/BrutalPill';
 import BrutalCard from "@components/generic/BrutalCard";
 import BrutalButton from '@components/generic/BrutalButton';
 
+// Import all images
+import sql from '../../assets/blog_covers/sql.png';
+import timeSeries from '../../assets/blog_covers/time-series.png';
+import defaultimg from '../../assets/astro.jpeg';
+// Import other images similarly
+
+// Create a mapping object
+const imageMap = {
+  'sql.png': sql,
+  'time-series.png': timeSeries,
+  'astro.jpeg': defaultimg
+  // Add other mappings similarly
+};
+
 
 const RecentBlogPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -77,7 +91,7 @@ const RecentBlogPosts = () => {
           <BrutalCard color="white">
       <h3 className='poppins'>{post.data.title}</h3>
       <div className="rounded-lg border-3 border-black my-4 h-56">
-        <img src={post.data.imgUrl.src} alt={post.data.title} className="rounded h-full w-full object-cover" />
+        <img src={imageMap[post.data.img].src} alt={post.data.title} className="rounded h-full w-full object-cover" />
       </div>
       <p className='poppins'>{post.data.description}</p>
 

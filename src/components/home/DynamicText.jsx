@@ -30,7 +30,7 @@ import '@fontsource-variable/outfit';
 <>
       <p className=' tc0 mt-4 outfit text-2xl md:text-5xl lg:text-7xl'>
               I am a <span
-                className='underline tc0' ref={el}
+                className='tc0' ref={el}
            ></span>
             </p>
             <p className='tc1 mt-2 outfit text-xl md:text-3xl lg:text-5xl'>

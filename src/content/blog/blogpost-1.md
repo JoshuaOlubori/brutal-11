@@ -4,7 +4,7 @@ pubDate: 11/09/2022 14:25
 author: "Tunde Mark"
 tags:
   - R
-
+img: 'time-series.png'
 imgUrl: '../../assets/blog_covers/time-series.png'
 description: A comprehensive guide to time series analysis and forecasting in R, covering data generation, transformation, plotting, decomposition, handling irregular data, outlier detection, and ARIMA modeling.
 layout: '../../layouts/BlogPost.astro'
