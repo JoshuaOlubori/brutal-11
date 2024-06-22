@@ -77,7 +77,7 @@ const RecentBlogPosts = () => {
           <BrutalCard color="white">
       <h3 className='poppins'>{post.data.title}</h3>
       <div className="rounded-lg border-3 border-black my-4 h-56">
-        <img src={post.data.imgUrl} alt={post.data.title} className="rounded h-full w-full object-cover" />
+        <img src={post.data.imgUrl.src} alt={post.data.title} className="rounded h-full w-full object-cover" />
       </div>
       <p className='poppins'>{post.data.description}</p>
 
