@@ -9,13 +9,20 @@
 
 }
 
+.sanchez {
+  font-family: 'Sanchez', serif;
+}
 
-@font-face {
-  font-family: 'Sanchez';
-  src: url('/fonts/sanchez.tff') format('tff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
+.dm-serif {
+  font-family: 'DM Serif Text', serif;
+}
+
+.poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.outfit {
+  font-family: 'Outfit Variable', sans-serif;
 }
 /*  */
 
@@ -38,6 +45,51 @@
   /* Theme Tokens */
   --primary: var(--sys-color-white);
   --secondary: var(--sys-color-black);
+
+  --color-1: #8ecae6;
+  --color-2: #219ebc;
+  --ccolor-3: #023047;
+  --color-4: #ffb703;
+  --color-5: #fb8500;
+
+  --ccolor-1: var(--color-1);
+  --ccolor-2: var(--color-2);
+  --ccolor-3: var(--color-3);
+  --ccolor-4: var(--color-4);
+  --ccolor-5: var(--color-5);
+}
+
+.bgc0 {
+  background-color: var(--ccolor-1);
+}
+.bgc1 {
+  background-color: var(--ccolor-2);
+}
+.bgc2 {
+  background-color: var(--ccolor-3);
+}
+.bgc3 {
+  background-color: var(--ccolor-4);
+}
+.bgc4 {
+  background-color: var(--ccolor-5);
+}
+
+
+.tc0 {
+  color: var(--ccolor-1);
+}
+.tc1 {
+  color: var(--ccolor-2);
+}
+.tc2 {
+  color: var(--ccolor-3);
+}
+.tc3 {
+  color: var(--ccolor-4);
+}
+.tc4 {
+  color: var(--ccolor-5);
 }
 
 html {

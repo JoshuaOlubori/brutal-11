@@ -8,6 +8,7 @@ import BrutalPill from '@components/generic/BrutalPill';
 import BrutalCard from "@components/generic/BrutalCard";
 import BrutalButton from '@components/generic/BrutalButton';
 
+
 const RecentBlogPosts = () => {
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -38,7 +39,7 @@ const RecentBlogPosts = () => {
 
   return (
     <section className="mt-8">
-      <BrutalCard>
+      <BrutalCard colorIndex={1}>
         <div className="text-center">
           <h2 className="text-2xl md:text-4xl lg:text-6xl mb-8 dm-serif">Projects</h2>
         </div>
@@ -73,11 +74,11 @@ const RecentBlogPosts = () => {
 
 
           <BrutalCard color="white">
-      <h3>{post.data.title}</h3>
+      <h3 className='poppins'>{post.data.title}</h3>
       <div className="rounded-lg border-3 border-black my-4 h-56">
         <img src={post.data.imgUrl} alt={post.data.title} className="rounded h-full w-full object-cover" />
       </div>
-      <p>{post.data.description}</p>
+      <p className='poppins'>{post.data.description}</p>
 
       <div className="flex justify-end my-4">
         <BrutalButton href={`/blog/${post.slug}/`}>Read post &rarr;</BrutalButton>

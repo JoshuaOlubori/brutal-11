@@ -3,6 +3,10 @@
 
 import React from 'react';
 import Typed from 'typed.js';
+// import './dtstyles.css';
+// Supports weights 100-900
+import '@fontsource-variable/outfit';
+
 
 
 
@@ -24,13 +28,13 @@ import Typed from 'typed.js';
     });
     return (
 <>
-      <p className='mt-4 outfit text-2xl md:text-5xl lg:text-7xl'>
+      <p className=' tc0 mt-4 outfit text-2xl md:text-5xl lg:text-7xl'>
               I am a<span
                 className='text-white' ref={el}
            ></span>
             </p>
-            <p className='mt-2 outfit text-xl md:text-3xl lg:text-5xl'>
-            Data geek by day, superhero by night.
+            <p className='tc0 mt-2 outfit text-xl md:text-3xl lg:text-5xl'>
+            Distilling the essence of your data.
             </p>
         </>
     );

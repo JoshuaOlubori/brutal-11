@@ -2,9 +2,9 @@
 import colors from './colors.json'; // Assuming colors.json is accessible
 import React, { useState } from 'react';
 
-const BrutalCard = ({ children, color = colors[Math.floor(Math.random() * colors.length)] }) => {
+const BrutalCard = ({ children, colorIndex = 0 }) => {
   const [cardStyle, setCardStyle] = useState({
-    backgroundColor: color,
+    backgroundColor: colors[colorIndex % colors.length],
     borderRadius: '0.5rem',
     border: '3px solid black',
     filter: 'drop-shadow(7px 7px 0 rgb(0 0 0 / 1))',

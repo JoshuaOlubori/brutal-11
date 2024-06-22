@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import colors from './colors.json'; // Assuming colors.json is accessible
+import colors from './colors.json';
+import '@fontsource/sanchez';
 
-const BrutalButton = ({ children, color = colors[Math.floor(Math.random() * colors.length)], ...rest }) => {
+const BrutalButton = ({ children, colorIndex = 0 , ...rest }) => {
   const buttonStyle = {
     filter: 'drop-shadow(5px 5px 0 rgb(0 0 0 / 1))',
     backgroundColor: 'white',
@@ -11,12 +12,12 @@ const BrutalButton = ({ children, color = colors[Math.floor(Math.random() * colo
     transition: 'all',
     transitionDuration: '0.5s',
     animation: 'ease-in-out',
-    fontFamily: "'Sanchez', serif",
+    fontFamily: "'sanchez', serif",
   };
 
   const hoverStyle = {
     filter: 'drop-shadow(3px 3px 0 rgb(0 0 0 / 1))',
-    backgroundColor: color,
+    backgroundColor: colors[colorIndex % colors.length],
   };
 
   const [style, setStyle] = useState(buttonStyle);
