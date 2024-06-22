@@ -46,17 +46,19 @@
   --primary: var(--sys-color-white);
   --secondary: var(--sys-color-black);
 
-  --color-1: #8ecae6;
-  --color-2: #219ebc;
-  --ccolor-3: #023047;
-  --color-4: #ffb703;
-  --color-5: #fb8500;
+  --color-1: #ffff;
+  --color-2: #d6d6d6;
+  --ccolor-3: #8c8c8c;
+  --color-4: #44444c;
+  --color-5: #0b0b09;
+  --color-6: #04d9ff; 
 
   --ccolor-1: var(--color-1);
   --ccolor-2: var(--color-2);
   --ccolor-3: var(--color-3);
   --ccolor-4: var(--color-4);
   --ccolor-5: var(--color-5);
+  --ccolor-6: var(--color-6);
 }
 
 .bgc0 {
@@ -91,6 +93,29 @@
 .tc4 {
   color: var(--ccolor-5);
 }
+.tc5 {
+  color: var(--ccolor-6);
+}
+
+
+
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 10px #04d9ff, 0 0 20px #04d9ff, 0 0 30px #04d9ff, 0 0 40px #04d9ff, 0 0 50px #04d9ff, 0 0 60px #04d9ff, 0 0 70px #04d9ff;
+  }
+  50% {
+    text-shadow: none;
+  }
+  100% {
+    text-shadow: 0 0 10px #04d9ff, 0 0 20px #04d9ff, 0 0 30px #04d9ff, 0 0 40px #04d9ff, 0 0 50px #04d9ff, 0 0 60px #04d9ff, 0 0 70px #04d9ff;
+  }
+}
+
+.glowing-text {
+  color: #04d9ff;
+  animation: glow 1s ease-in-out infinite;
+}
+
 
 html {
   scroll-behavior: smooth;

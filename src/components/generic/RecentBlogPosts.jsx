@@ -17,7 +17,7 @@ const RecentBlogPosts = () => {
   useEffect(() => {
     const fetchData = async () => {
       const fetchedPosts = await getCollection('blog'); // Assuming getCollection is accessible
-      const formattedPosts = fetchedPosts.reverse().map((post) => {
+      const formattedPosts = fetchedPosts.map((post) => {
         // Check if data exists and category property is present
         if (post.data && post.data.description) {
           console.log("Category:", post.data.category); // Log the category for testing
@@ -39,9 +39,9 @@ const RecentBlogPosts = () => {
 
   return (
     <section className="mt-8">
-      <BrutalCard colorIndex={1}>
+      <BrutalCard colorIndex={4}>
         <div className="text-center">
-          <h2 className="text-2xl md:text-4xl lg:text-6xl mb-8 dm-serif">Projects</h2>
+          <h2 className="tc0 text-2xl md:text-4xl lg:text-6xl mb-8 dm-serif">Projects</h2>
         </div>
         <div className='flex justify-center space-x-4 mb-8'>
           {categories.map((category) => (
@@ -49,6 +49,7 @@ const RecentBlogPosts = () => {
               key={category}
               variant={selectedCategory === category ? 'default' : 'outline'}
               onClick={() => setSelectedCategory(category)}
+              tab_bg_color={"white"}
             >
               {category}
             </BrutalButton>

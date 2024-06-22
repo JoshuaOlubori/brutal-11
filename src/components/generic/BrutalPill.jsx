@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import colors from './colors.json'; // Assuming colors.json is accessible
 
-const BrutalPill = ({ children, colorIndex = 0  }) => {
+const BrutalPill = ({ children, colorIndex = 1 }) => {
   const pillStyle = {
     filter: 'drop-shadow(3px 3px 0 rgb(0 0 0 / 1))',
     userSelect: 'none',
@@ -17,16 +17,31 @@ const BrutalPill = ({ children, colorIndex = 0  }) => {
 
   const hoverStyle = {
     filter: 'drop-shadow(5px 5px 0 rgb(0 0 0 / 1))',
-    backgroundColor: colors[colorIndex % colors.length],
+    backgroundColor: colors[4],
+    color: 'white'
   };
 
+  
+  const [style, setStyle] = useState(pillStyle);
+
+  const handleMouseOver = () => {
+    setStyle({ ...pillStyle, ...hoverStyle });
+  };
+
+  const handleMouseOut = () => {
+    setStyle(pillStyle);
+  };
+
+
   return (
-    <span
+    <button
       className="brutal-pill"
-      style={{ ...pillStyle, ...(colors[colorIndex % colors.length] ? hoverStyle : {}) }}
+      style={style}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
     >
       {children}
-    </span>
+    </button>
   );
 };
 

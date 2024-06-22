@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import colors from './colors.json';
 import '@fontsource/sanchez';
 
-const BrutalButton = ({ children, colorIndex = 0 , ...rest }) => {
+const BrutalButton = ({ children, tab_bg_color, colorIndex = 0 , ...rest }) => {
   const buttonStyle = {
-    filter: 'drop-shadow(5px 5px 0 rgb(0 0 0 / 1))',
+    filter: `drop-shadow(5px 5px 0 ${tab_bg_color})`,
     backgroundColor: 'white',
     display: 'inline-block',
     padding: '0.5rem 1rem',
@@ -16,8 +16,9 @@ const BrutalButton = ({ children, colorIndex = 0 , ...rest }) => {
   };
 
   const hoverStyle = {
-    filter: 'drop-shadow(3px 3px 0 rgb(0 0 0 / 1))',
-    backgroundColor: colors[colorIndex % colors.length],
+    filter: `drop-shadow(3px 3px 0 white)`,
+    backgroundColor: colors[3],
+    color: 'white'
   };
 
   const [style, setStyle] = useState(buttonStyle);

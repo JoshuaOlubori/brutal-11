@@ -7,7 +7,7 @@ const BrutalCard = ({ children, colorIndex = 0 }) => {
     backgroundColor: colors[colorIndex % colors.length],
     borderRadius: '0.5rem',
     border: '3px solid black',
-    filter: 'drop-shadow(7px 7px 0 rgb(0 0 0 / 1))',
+    filter: 'drop-shadow(7px 7px 0 white)',
     transition: 'all',
     padding: '1rem',
     transitionDuration: '0.5s',
