@@ -6,7 +6,7 @@ tags:
   - SQL
   - WebDev
   - Programming
-imgUrl: '/src/assets/blog_covers/sql.png'
+imgUrl: '../../assets/blog_covers/sql.png'
 description: Lorem markdownum longo os thyrso telum, continet servat fetus nymphae, vox nocte sedesque, decimo. Omnia esse, quam sive; conplevit illis indestrictus admovit dedit sub quod protectus, impedit non.
 layout: '../../layouts/BlogPost.astro'
 category: App
