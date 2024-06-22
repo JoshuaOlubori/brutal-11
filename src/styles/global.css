@@ -99,7 +99,7 @@
 
 
 
-@keyframes glow {
+/* @keyframes glow {
   0% {
     text-shadow: 0 0 10px #04d9ff, 0 0 20px #04d9ff, 0 0 30px #04d9ff, 0 0 40px #04d9ff, 0 0 50px #04d9ff, 0 0 60px #04d9ff, 0 0 70px #04d9ff;
   }
@@ -114,7 +114,17 @@
 .glowing-text {
   color: #04d9ff;
   animation: glow 1s ease-in-out infinite;
+} */
+
+.glowing-text {
+  color: #04d9ff;
+  text-shadow: 
+    0 0 3px #04d9ff,
+    0 0 5px #04d9ff,
+    0 0 7px #04d9ff,
+    0 0 10px #04d9ff;
 }
+
 
 
 html {
