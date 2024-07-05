@@ -1,7 +1,7 @@
 ---
 title: Transforming and Analyzing Job Data Using SQL
 pubDate: 12/31/2022 12:05
-author: "Tunde Mark"
+author: "Dennis Okwechime"
 tags:
   - SQL
   - WebDev

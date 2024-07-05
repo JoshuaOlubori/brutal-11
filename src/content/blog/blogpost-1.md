@@ -1,7 +1,7 @@
 ---
 title: Analyzing and Forecasting Time Series Data with R
 pubDate: 11/09/2022 14:25
-author: "Tunde Mark"
+author: "Dennis Okwechime"
 tags:
   - R
 img: 'time-series.png'

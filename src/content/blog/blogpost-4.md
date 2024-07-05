@@ -1,6 +1,6 @@
 ---
 title: Project 4
-author: Tunde Mark
+author: Dennis Okwechime
 pubDate: 2023-02-15 12:00
 tags:
   - Astro
