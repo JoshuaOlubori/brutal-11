@@ -18,6 +18,7 @@ import '@fontsource/poppins';
 
 import { Image } from "astro:assets";
 import headshot from "../assets/profile.jpg";
+import resume from "../assets/resume.pdf";
 
 // const builtWith = [
 //   { name: 'Astro', url: 'https://astro.build/' },
@@ -51,7 +52,7 @@ import headshot from "../assets/profile.jpg";
         <div class='flex flex-col justify-between items-start gap-4'>
           <Hero client:load></Hero>
           
-          <MyButton target={'_blank'} href='/src/assets/resume.pdf' tab_bg_color="white">
+          <MyButton target={'_blank'} href={resume} tab_bg_color="white">
             View my resume &rarr;
           </MyButton>
         
