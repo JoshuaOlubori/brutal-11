@@ -10,6 +10,7 @@ import BrutalButton from '@components/generic/BrutalButton';
 
 // Import all images
 import sql from '../../assets/blog_covers/sql.png';
+import houses from '../../assets/blog_covers/netherlands_houses.jpeg'
 import timeSeries from '../../assets/blog_covers/time-series.png';
 import defaultimg from '../../assets/astro.jpeg';
 // Import other images similarly
@@ -18,6 +19,7 @@ import defaultimg from '../../assets/astro.jpeg';
 const imageMap = {
   'sql.png': sql,
   'time-series.png': timeSeries,
+  'netherlands_houses.jpeg': houses,
   'astro.jpeg': defaultimg
   // Add other mappings similarly
 };
