@@ -8,7 +8,7 @@ tags:
   - Astro
   - Vite
 img: 'astro.jpeg'
-imgUrl: '/src/assets/astro.jpeg'
+imgUrl: '/src/assets/blog_covers/a_street_of_serene_houses_in_netherlands.jpeg'
 layout: ../../layouts/BlogPost.astro
 category: App
 ---
@@ -17,38 +17,12 @@ category: App
 
 This project aims to predict house prices using deep learning models based on image data. We'll explore the use of two popular convolutional neural network architectures: MobileNet and InceptionV3. 
 
-The data is scraped from OpenRent, a popular UK property rental website. The script uses Selenium for web automation and BeautifulSoup for HTML parsing. View the Jupyter Notebook below:
+The data is scraped from OpenRent, a popular UK property rental website. The script uses Selenium for web automation and BeautifulSoup for HTML parsing. The scraping code is shown below in a Jupyter Notebook:
+
+### Web scraping
 
 <iframe src="https://www.kaggle.com/embed/joshuaolubori/dennis-house-scraping?kernelSessionId=187034733" height="800" style="margin: 0 auto; width: 100%; max-width: 950px;" frameborder="0" scrolling="auto" title="dennis_house_scraping"></iframe>
 
- Here's a breakdown of the key steps:
+### Deep Learning
 <iframe src="https://www.kaggle.com/embed/joshuaolubori/dennis-house?kernelSessionId=187031582" height="800" style="margin: 0 auto; width: 100%; max-width: 950px;" frameborder="0" scrolling="auto" title="notebookac1c9a2b1c"></iframe>
 
-## Iovis late orbem Perseus sunt
-
-Aras reperire, sui motis correpti coniunx Onetor amore ferire lacertis, petiit.
-Bis pallor et mecum me, igne patruelibus *tendebam*, vultu sterilique terruerat
-*tempore* medium aera **eadem Mittor**.
-
-- Non turba loca dederunt primordia ineamus Dictys
-- Tanti amat mundus sedula
-- Potuissent aetas parili coniuge se lumina breve
-- Tamen ille crepitantibus ulla coeperunt quibus iugulo
-- Pindusque solacia luctataque felix
-
-## Longum minus sic saepe
-
-Genu cupiens quoque: cum dolor: sollicitive cantu, et piae Leuconoe, huius non
-nil tuli Peleusque rauca. Et alvum cuncti Hippodamas meritis nec coniunx ausa,
-pete. Congestaque nisi nullus poena. Tanto cum, curvis vulnera quod optatis,
-trahens conplexa saepe.
-
-Hominum quo. Signa germanaeque iuvat at feruntur precantibus corpus praebuerat
-excipit mixtaeque inferior, haec percepit regum: nec nec sit ferenti.
-
-## Geminas namque quod referitur argenteus aderat superstes
-
-Insistere pugno. Cum morae vigilantibus dulces Cycnus: neque cum sororis.
-
-Hac Aestas solet docebo tandem tamquam omnis vitiantur mitte, vatis in animique
-infelix passimque. Superasset onus.
