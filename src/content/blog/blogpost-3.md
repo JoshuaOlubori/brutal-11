@@ -1,14 +1,14 @@
 ---
 title: House Price Prediction, A Deep Learning Approach
-description: Lorem markdownum longo os thyrso telum, continet servat fetus nymphae, vox nocte sedesque, decimo. Omnia esse, quam sive; conplevit illis indestrictus admovit dedit sub quod protectus, impedit non.
+description: Using ML and Deep learning to predict house prices in the UK
 pubDate: 2023-02-14 23:49
 author: Dennis Okwechime
 tags: 
   - CSS
   - Astro
   - Vite
-img: 'astro.jpeg'
-imgUrl: '/src/assets/blog_covers/a_street_of_serene_houses_in_netherlands.jpeg'
+img: 'a_street_of_serene_houses_in_netherlands.jpeg'
+imgUrl: '../../assets/blog_covers/a_street_of_serene_houses_in_netherlands.jpeg'
 layout: ../../layouts/BlogPost.astro
 category: App
 ---
