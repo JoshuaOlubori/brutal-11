@@ -8,7 +8,7 @@ img: 'time-series.png'
 imgUrl: '../../assets/blog_covers/time-series.png'
 description: A comprehensive guide to time series analysis and forecasting in R, covering data generation, transformation, plotting, decomposition, handling irregular data, outlier detection, and ARIMA modeling.
 layout: '../../layouts/BlogPost.astro'
-category: Notebook
+category: Script
 ---
 ### Title: Analyzing and Forecasting Time Series Data with R
 

@@ -4,14 +4,12 @@ pubDate: 12/31/2022 12:05
 author: "Dennis Okwechime"
 tags:
   - SQL
-  - WebDev
-  - Programming
 
 img: 'sql.png'
 imgUrl: '../../assets/blog_covers/sql.png'
 description: This project explores telecom customer churn using data analysis in Microsoft SQL Server. By exploring factors like call behavior, service usage, and international call patterns, we uncover insights to help retain customers and optimize services.
 layout: '../../layouts/BlogPost.astro'
-category: App
+category: Script
 ---
 
 # Transforming and Analyzing Job Data Using SQL

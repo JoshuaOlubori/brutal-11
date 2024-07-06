@@ -4,13 +4,13 @@ description: Predicting the prices of homes in the UK with ML and Deep Learning
 pubDate: 2023-02-14 23:49
 author: Dennis Okwechime
 tags: 
-  - CSS
-  - Astro
-  - Vite
+  - Python
+  - Deep Learning
+  - ML
 img: 'netherlands_houses.jpeg'
 imgUrl: '../../assets/blog_covers/netherlands_houses.jpeg'
 layout: ../../layouts/BlogPost.astro
-category: App
+category: Notebook
 ---
 
 ## House Price Prediction
