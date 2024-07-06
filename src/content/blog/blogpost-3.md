@@ -1,7 +1,7 @@
 ---
 title: House Price Prediction, A Deep Learning Approach
 description: Predicting the prices of homes in the UK with ML and Deep Learning
-pubDate: 2023-02-14 23:49
+pubDate: 12/31/2024 23:49
 author: Dennis Okwechime
 tags: 
   - Python

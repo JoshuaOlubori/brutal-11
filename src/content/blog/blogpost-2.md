@@ -1,6 +1,6 @@
 ---
 title: Transforming and Analyzing Job Data Using SQL
-pubDate: 12/31/2022 12:05
+pubDate: 12/31/2023 12:05
 author: "Dennis Okwechime"
 tags:
   - SQL
