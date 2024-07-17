@@ -983,4 +983,5 @@ non_error_df[['House ID']].to_csv('Processed Images Houses List.csv', index=Fals
 non_error_df
 ```
 
-In the next part, we would explore the Machine Learning implementation.
+In the [next part](https://brutal-11.onrender.com/blog/blogpost-4/), we would explore the Machine Learning implementation.
+
