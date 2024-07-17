@@ -156,7 +156,8 @@ plt.ylabel('Column Names')
 # Show the plot
 plt.show()
 ```
-![missing data chart]('../../assets/post_images/missing data chart.png')
+![missing data chart](../../assets/post_images/missing-data-chart.png)
+
 
 The missing values in the categorical columns are filled in with "NA"
 ```python
@@ -211,9 +212,10 @@ for col in categorical_columns:
     # Show the plot
     plt.show()
 ```
-For brevity's sake, I display only two of the countplots. A countplot was plotted for each categorical variable and all can be viewed in the full notebook.
+> For brevity's sake, I display only one of the countplots. One was plotted for each categorical variable and all can be viewed in
+> the full notebook.
 
-![missing data chart]('../../assets/post_images/missing data chart.png')
+![missing data chart](../../assets/post_images/countplot-1.png)
 
 ### Correlation Heatmap
 
@@ -257,7 +259,7 @@ correlation_table_and_heatmap(all_df)
 | Minimum Tenancy | 0.011955  | 0.027874  | 0.059208  | -0.089258   | 0.229101  | -0.031098 | 1.000000        |
 
 
-![missing data chart]('../../assets/post_images/missing data chart.png')
+![heatmap](../../assets/post_images/heatmap.png)
 
 ### Rent Price Variation across Categorical Features
 
@@ -291,12 +293,12 @@ for col in categorical_columns:
     plt.show()
 ```
 
-Again, for brevity, I include only two of the plots
+Again, for brevity, I include one of the plots
 
-![missing data chart]('../../assets/post_images/missing data chart.png')
+![categorical columns vs rent price](../../assets/post_images/rent-price-1.png)
 
 ## Data Preprocessing
-To start off this step, first we h
+To start off this step, first we replace low count values in the categorical columns with "others" to reduce the unnecessarily high cardinalities
 
 ```python
 MIN_FREQ = 20
@@ -598,7 +600,7 @@ Now we can plot the metrics of each of our competing models to see how they fare
 ```python
 plot_result()
 ```
-![missing data chart]('../../assets/post_images/missing data chart.png')
+![model results](../../assets/post_images/model-results.png)
 
 ### Models Feature Importances
 
@@ -635,7 +637,7 @@ def plot_feature_importance(importance,names,model_type,n=30):
 
 plot_feature_importance(rf.feature_importances_,main_cols,'RANDOM FOREST')
 ```
-![missing data chart]('../../assets/post_images/missing data chart.png')
+!rf feature importance](../../assets/post_images/rf-feature-importance.png)
 
 ```python
 def plot_xgboost_feature_importance(xgb_model, importance_type='weight', figsize=(10, 8),n = 30):
@@ -672,12 +674,12 @@ def plot_xgboost_feature_importance(xgb_model, importance_type='weight', figsize
 
 plot_xgboost_feature_importance(xgb)
 ```
-![missing data chart]('../../assets/post_images/missing data chart.png')
+![xgboost feature importance plot](../../assets/post_images/xgboost-feature-importance.png)
 
 ```python
 plot_feature_importance(cat.get_feature_importance(),main_cols,'CATBOOST')
 ```
-![missing data chart]('../../assets/post_images/missing data chart.png')
+![catboost feature importance plot](../../assets/post_images/catboost-feature-importance.png)
 
 ### Preparation for deployment: Saving models and categories
 Our machine learning models have been trained and battled it out to find the ultimate rent price predictor. But their knowledge is valuable beyond this competition! To ensure we can use these powerful models in the future, this step focuses on saving them for later use, along with the processed categorical data they were trained on. This will allow us to deploy the models in real-world applications, like an automated rent price estimation tool.
