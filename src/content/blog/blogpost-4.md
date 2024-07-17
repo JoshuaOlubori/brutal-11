@@ -1,11 +1,11 @@
 ---
-title: House Price Prediction I 
-description: First part of my masters thesis -- House Rent Prediction using Machine Learning and Deep Learning Algorithms, The case of the United Kingdom
-pubDate: 02/15/2024 02:55
+title: House Price Prediction 2
+description: Sequel to the first part of my project predicting house prices in the UK -- Implementing ML 
+pubDate: 02/15/2024 04:00
 author: Dennis Okwechime
 tags: 
-  - Web scraping
-  - Selenium
+  - ML
+  - sklearn
 
 img: 'netherlands_houses.jpeg'
 imgUrl: '../../assets/blog_covers/netherlands_houses.jpeg'
@@ -13,639 +13,10 @@ layout: ../../layouts/BlogPost.astro
 category: Notebook
 ---
 
+In the first part, we scraped property data from 5 UK cities and processed the images corresponding to each of the properties. Now we implement a Machine Learning workflow to identify the best model to predict house prices based on the information we have.
 
-### Introduction
+The notebook begins by importing the necessary libraries to facilitate the entire machine-learning workflow
 
-The recent fluctuation in the U.K. housing market highlights the substantial impact of home price changes on consumer spending, financial markets, and the overall macroeconomy (Bloomberg, 2023). Developing a reliable forecasting model could offer valuable insights to central banks, financial regulatory organizations, and other economic entities. A precise forecast of house prices is crucial for potential homeowners, developers, investors, appraisers, tax assessors, mortgage lenders, insurers, and other participants in the real estate market, as stated by Rafiei and Adeli (2016).
-The aim of this project is to:
-
-- To scrape and gather extensive property information from leading real estate websites, ensuring a wide range of property kinds, locations, and attributes. 
-- To develop a predictive analytics model using Linear Regression, Random Forest, XGBoost, and Catboost to analyze a dataset of housing prices.
-- To determine the effectiveness of the created predictive model in comparison to previous research. 
-- To choose the top two models for creating an ensemble model to improve the reliability of predicting housing prices using the machine learning and deep learning approach(CNN). 
-- To implement the ensemble models for testing purposes within the mobile web environment.
-
-
----
-
-Data was collected on 3565 houses in 5 cities, namely, London, Birmingham, Liverpool, Glasgow & Manchester.
-
-Each listing includes:
--   Text description
--   Photos of the house exterior, bedrooms, kitchen & bathroom
--   Location postcode
--   Number of bedrooms, bathrooms & gardens ️
-
-Data comes from open rent websites & is manually verified using real estate info.
-
-
-
-## House Data Scraping
-
-A script was developed  to scrape the data. These were the core technologies used.
--   **Selenium:** Automates tasks within a web browser, allowing the script to navigate and interact with Open Rent.
--   **Beautiful Soup:** Parses the HTML content of webpages, helping the script extract specific details about each property.
--   **Pandas:** Go-to library for manipulating tabular data
--   **google_colab_selenium:** Enables the script to run Selenium within the Google Colab environment.
-
-### **Step 1: Importing the Essentials**
-
-The script starts by importing the necessary libraries. These include:
--   **time:** Manages delays between actions, ensuring the script doesn't overwhelm the website.
--   **Pandas:** As mentioned above, for data manipulation and storage.
--   **Beautiful Soup:** For parsing HTML content.
--   **Selenium:** To control the web browser.
--   **tqdm** Creates progress bars to visualize the scraping process.
--   **requests** used for making HTTP requests
--   **Beautiful Soup (bs4):** Parses the HTML content of openrent.co.uk
-
-```python
-# Import necessary libraries
-import time # For adding delays in the script
-from PIL import Image # For working with images
-from selenium import webdriver # For controlling the web browser
-from selenium.webdriver.chrome.options import Options # For configuring Chrome options
-from selenium.webdriver.common.by import By # For locating elements on a webpage
-from tqdm import tqdm # For creating progress bars
-import requests # For making HTTP requests
-import pandas as pd # For working with data in tabular format
-from bs4 import BeautifulSoup # For parsing HTML content
-pd.set_option('display.max_columns', None) # To display all columns in pandas DataFrame
-```
-
-### **Step 2: Configuring the Chrome Browser**
-
-The script then configures the Chrome browser specifically for web scraping. This involves:
-
--   Setting the desired window size for efficient data extraction.
--   Disabling unnecessary pop-ups and info bars to streamline the process.
--   Ignoring certificate errors (if encountered) to ensure smooth operation.
--   Launching Chrome in incognito mode for better privacy and resource management.
-
-These configurations are applied to a Chrome WebDriver instance created using the google_colab_selenium library.
-
-```python
-# Import the google_colab_selenium module as gs
-import google_colab_selenium as gs
-# Create Chrome options object
-options = Options()
-# Add extra options to the Chrome browser
-options.add_argument("--window-size=1920,1080")  # Set the window size
-options.add_argument("--disable-infobars")  
-# Disable the infobars
-options.add_argument("--disable-popup-blocking")  # Disable pop-ups
-options.add_argument("--ignore-certificate-errors")  # Ignore certificate errors
-options.add_argument("--incognito")  # Use Chrome in incognito mode
-# Create a Chrome WebDriver instance with the specified options
-driver = gs.Chrome(options=options)
-```
-
-###  Step 3: City Selection, URL Construction, and Page Loading
-
-The user is granted the flexibility to specify the city for property search by modifying the CITY variable within the script. Due to the selected city, the script dynamically develops a relevant URL of OpenRent, allowing it to search for properties within the selected area. Next, the script navigates to the constructed URL and uses a very intelligent scroll mechanism to load all available property listings on the page. The number of scrolls is controlled by the NO_OF_SCROLLS variable; this number gets repeatedly taken down the page, whereby the scrolling pause time for every attempt is controlled by the SCROLL_PAUSE_TIME variable (See [listing 1.3](#a)),
-allowing the page to load seamlessly.
-
- <a name="a"></a>
-```python
-# Define the city for property search
-#CITY = 'birmingham-west-midlands'
-CITY =   'glasgow-city' #'manchester' #'liverpool-merseyside'
-# Define scroll parameters
-SCROLL_PAUSE_TIME = 0.5   # Time to pause between each scroll
-NO_OF_SCROLLS = 30   # Number of times to scroll
-# Construct the URL for property search in the specified city
-url = f'https://www.openrent.co.uk/properties-to-rent/{CITY}'
-# Navigate to the constructed URL
-driver.get(url)
-# Get the initial scroll height of the webpage
-last_height = driver.execute_script("return document.body.scrollHeight")
-
-# Loop to scroll down the webpage
-for i in tqdm(range(NO_OF_SCROLLS)):
-    # Scroll down to the bottom of the page
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
-    # Wait for a short time to allow the page to load more content
-    time.sleep(SCROLL_PAUSE_TIME)
-
-    # Calculate the new scroll height after scrolling
-    new_height = driver.execute_script("return document.body.scrollHeight")
-
-    # Check if the new scroll height is the same as the last scroll height
-    # If it is the same, it means that the page has reached the end, so break the loop
-    if new_height == last_height:
-        break
-
-    # Update the last scroll height to the new scroll height for the next iteration
-    last_height = new_height
-```
-
-### Step 4: HTML Parsing, Link Extraction, and Property Specification Extraction
-Once the scrolling process has been completed, the script will get all of the HTML content from the webpage with the Selenium WebDriver and then parse it using the superb Beautiful Soup library. The script will then take the relevant property listing element and extract all the property links from within it. It then commences a series of iterations by accessing every extracted property link. At each link, it extracts from the corresponding HTML content of that property the whole array of all specifications about the property, including property ID, title, description, features, station distances, and any other relevant information.
-
-```python
-# Get the HTML content of the page using Selenium WebDriver
-html_content = driver.page_source
-
-# Parse the HTML content using Beautiful Soup
-soup = BeautifulSoup(html_content, 'html.parser')
-
-# Find the element containing property listings
-property_listings = soup.find(id='property-data')
-
-# Extract all property links from the property listings
-all_links = [propert['href'] for propert in property_listings.find_all('a', class_='pli clearfix')]
-
-all_links = [link for link in all_links if len(link) == 8]
-
-# Initialize an empty list to store all property specifications
-all_specs = []
-
-# Iterate through all property links
-for link in tqdm(all_links):
-    # Get the HTML content of the property page
-    page = requests.get(f'https://www.openrent.co.uk{link}').text.replace('\r', '').replace("\n", '').replace('\xa0', ' ')
-
-    # Parse the HTML content using Beautiful Soup
-    soup = BeautifulSoup(page, 'html.parser')
-
-    # Initialize a dictionary to store specifications of the current property
-    spec_dict = {}
-
-    # Extract property ID from the link
-    spec_dict['id'] = int(link[1:])
-
-    # Extract property title and description
-    spec_dict['title'] = soup.find('h1').text
-    spec_dict['description'] = soup.find(class_='description').text
-
-    # Extract property features and their values
-    for stat in soup.find_all('table')[0].find_all("td"):
-        feature = stat.find("span").text.strip()[:-1]
-        value = stat.find('strong').text.strip()
-        spec_dict[feature] = value
-
-    # Extract additional features and their values
-    for table in soup.find(id='FeaturesTab').find_all('table'):
-        for row in table.find_all('tr'):
-            feature = row.find_all('td')[0].text.strip()
-            if len(row.find_all('td')[1].find_all('i')) > 0:
-                if row.find_all('td')[1].find_all('i')[0]['class'][1] == 'fa-check':
-                    value = 'Yes'
-                else:
-                    value = 'No'
-            else:
-                value = row.find_all('td')[1].text.strip()
-            spec_dict[feature] = value
-
-    # Extract station distances
-    station_distances = []
-    try:
-      for row in soup.find(id='LocalTransport').find_all('tr')[1:]:
-          station = row.find_all('td')[1].text.strip()
-          distance = row.find_all('td')[2].text.strip()
-          station_distances.append([station, distance])
-      spec_dict['station_distances'] = station_distances
-    except AttributeError:
-      pass
-    # Append the property specifications to the list
-    all_specs.append(spec_dict)
-```
-
-### Step 5: Data Storage and Google Drive Integration
-
-When iterating over the property links, the script accumulates the specified details in a list of dictionaries, and eventually converts it to a Pandas DataFrame. It then associates with Google Drive so that it can instantly save the resulting DataFrame as a CSV file on the user's Drive. The CSV file is named by the user-selected city for ease of identification and data sorting during the next step of processing. This comprehensive web scraping script serves as a powerful tool for data collection and preparation, laying the foundation for training a robust house prediction model. The scraped data can be further pre-processed, cleaned, and augmented with additional relevant features to train machine learning and deep learning models that accurately predict house prices or other pertinent target variables. Ensemble techniques mentioned include the combination of multiple models, where each model harnesses the strengths of each approach, in turn augmenting prediction accuracy and robustness. But before that, we scrape the house images as well.
-
-```python
-# Create a DataFrame from the list of property specifications
-df = pd.DataFrame.from_dict(all_specs, orient='columns')
-
-# Display the DataFrame
-df
-```
-The final scraped data looks like this
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>id</th>
-      <th>title</th>
-      <th>description</th>
-      <th>Bedrooms</th>
-      <th>Bathrooms</th>
-      <th>Max Tenants</th>
-      <th>Location</th>
-      <th>Deposit</th>
-      <th>Rent PCM</th>
-      <th>Bills Included</th>
-      <th>Broadband</th>
-      <th>Student Friendly</th>
-      <th>Families Allowed</th>
-      <th>Pets Allowed</th>
-      <th>Smokers Allowed</th>
-      <th>DSS/LHA Covers Rent</th>
-      <th>Available From</th>
-      <th>Online Viewings</th>
-      <th>Garden</th>
-      <th>Parking</th>
-      <th>Fireplace</th>
-      <th>Furnishing</th>
-      <th>EPC Rating</th>
-      <th>DSS Income Accepted</th>
-      <th>EPC Not Required</th>
-      <th>Students Only</th>
-      <th>Maximum Tenancy</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1957557</td>
-      <td>2 Bed Flat, Albion Gate, G1</td>
-      <td>Smart 2x doubl...</td>
-      <td>2</td>
-      <td>1</td>
-      <td>4</td>
-      <td>Glasgow</td>
-      <td>£1,600.00</td>
-      <td>£1,400.00</td>
-      <td>No</td>
-      <td>View Offers</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Today</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>Furnished</td>
-      <td>C</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1980803</td>
-      <td>2 Bed Flat, Blackfriars Road, G1</td>
-      <td>Two bedroom fl...</td>
-      <td>2</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Glasgow</td>
-      <td>£1,400.00</td>
-      <td>£1,400.00</td>
-      <td>No</td>
-      <td>View Offers</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>NaN</td>
-      <td>25 March, 2024</td>
-      <td>NaN</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Furnished</td>
-      <td>B</td>
-      <td>Yes</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2011373</td>
-      <td>Room in a Shared Flat, Bothwell Street, G2</td>
-      <td>AVAILABLE 14th...</td>
-      <td>2</td>
-      <td>2</td>
-      <td>1</td>
-      <td>Glasgow</td>
-      <td>£900.00</td>
-      <td>£600.00</td>
-      <td>No</td>
-      <td>View Offers</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>NaN</td>
-      <td>Today</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Furnished</td>
-      <td>NaN</td>
-      <td>Yes</td>
-      <td>Shared Accommodation</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1955586</td>
-      <td>2 Bed Flat, Argyle Street, G2</td>
-      <td>This apartment...</td>
-      <td>2</td>
-      <td>2</td>
-      <td>2</td>
-      <td>Glasgow</td>
-      <td>£1,370.00</td>
-      <td>£1,370.00</td>
-      <td>No</td>
-      <td>View Offers</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Today</td>
-      <td>NaN</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Furnished</td>
-      <td>C</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-  </tbody>
-</table>
-
-## House Image Scraping
-
-The script begins by importing the libraries required for its functioning. These include time for introduction of strategic delays, PIL for image processing operations, tqdm for the creation of visually pleasing progress bars, requests for the handling of HTTP requests, Pandas for working with tabular data structures, Beautiful Soup for parsing HTML content, and os for interacting with the operating system's file system. The script then sets display.max_columns in Pandas such that all columns are displayed in the resulting DataFrame.
-
-It also imports the drive module from the google.colab library, which is used to mount the user's Google Drive within the Google Colab environment.
-
-### Step 1: Data Loading and Preparation
-
-It then mounts the user's Google Drive so that files are accessible from the Drive. The CSV file "Openrent Liverpool.csv" is then read from the user's Google Drive at the designated location. The data is loaded into a Pandas Data Frame named, and the unique property IDs are extracted from the DataFrame's 'id' column and saved in a different list named id_list.
-```python
-from google.colab import drive
-
-# Mount Google Drive
-drive.mount('/content/drive')
-
-df = pd.read_csv('/content/drive/MyDrive/Project/House_Prices_Scraped_Data/Openrent Liverpool.csv')
-df
-```
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>id</th>
-      <th>title</th>
-      <th>description</th>
-      <th>Bedrooms</th>
-      <th>Bathrooms</th>
-      <th>Max Tenants</th>
-      <th>Location</th>
-      <th>Deposit</th>
-      <th>Rent PCM</th>
-      <th>Bills Included</th>
-      <th>Broadband</th>
-      <th>Student Friendly</th>
-      <th>Families Allowed</th>
-      <th>Pets Allowed</th>
-      <th>Smokers Allowed</th>
-      <th>DSS/LHA Covers Rent</th>
-      <th>Available From</th>
-      <th>Minimum Tenancy</th>
-      <th>Online Viewings</th>
-      <th>Garden</th>
-      <th>Parking</th>
-      <th>Fireplace</th>
-      <th>Furnishing</th>
-      <th>EPC Rating</th>
-      <th>DSS Income Accepted</th>
-      <th>Maximum Tenancy</th>
-      <th>EPC Not Required</th>
-      <th>Students Only</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>2011776</td>
-      <td>Studio Flat, Vista Residence, L2</td>
-      <td>We are proud t...</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Liverpool</td>
-      <td>£200.00</td>
-      <td>£815.00</td>
-      <td>Yes</td>
-      <td>View Offers</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Today</td>
-      <td>6 Months</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Furnished</td>
-      <td>B</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1967713</td>
-      <td>1 Bed Flat, Cumberland Street, L1</td>
-      <td>We are proud t...</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Liverpool</td>
-      <td>£951.92</td>
-      <td>£825.00</td>
-      <td>No</td>
-      <td>View Offers</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Today</td>
-      <td>6 Months</td>
-      <td>NaN</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Furnished</td>
-      <td>B</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2011825</td>
-      <td>2 Bed Flat, Cheapside, L2</td>
-      <td>APARTMENT IS A...</td>
-      <td>2</td>
-      <td>2</td>
-      <td>3</td>
-      <td>Liverpool</td>
-      <td>£1,269.23</td>
-      <td>£1,100.00</td>
-      <td>No</td>
-      <td>View Offers</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>11 March, 2024</td>
-      <td>6 Months</td>
-      <td>NaN</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Furnished</td>
-      <td>D</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1897891</td>
-      <td>1 Bed Flat, Mathew Street, L2</td>
-      <td>Self Service A...</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>Liverpool</td>
-      <td>£1,000.00</td>
-      <td>£2,300.00</td>
-      <td>Yes</td>
-      <td>View Offers</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>No</td>
-      <td>NaN</td>
-      <td>Today</td>
-      <td>1 Months</td>
-      <td>NaN</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>Furnished</td>
-      <td>D</td>
-      <td>Yes</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>1987164</td>
-      <td>1 Bed Flat, Cumberland Street, L1</td>
-      <td>A well present...</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Liverpool</td>
-      <td>£925.00</td>
-      <td>£825.00</td>
-      <td>No</td>
-      <td>View Offers</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>No</td>
-      <td>No</td>
-      <td>21 March, 2024</td>
-      <td>6 Months</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>Furnished</td>
-      <td>C</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-  </tbody>
-</table>
-
-### 4.2.2 Image Downloading Process
-
-It then enters a loop that iterates through each property ID in the id_list. For each ID, it constructs the corresponding URL for the property page on the OpenRent website and retrieves the HTML content of that page using the requests library.
-
-After retrieving the HTML content, the model uses Beautiful Soup to parse the HTML and extract the URLs of all thumbnail images associated with the property listing. These image URLs are stored in a list called image_links followed by creating a new folder within the user's Google Drive using the property ID as the folder name. This folder will be used to store the downloaded images for the corresponding property.
-
-Within the newly created folder, the script iterates through each image URL in the image_links list. For each image URL, it constructs the complete URL by prepending "https:" to the relative URL. It then sends a GET request to the constructed image URL using the requests library and checks if the request was successful (status code 200). If the request was successful, it opens a new file in binary write mode within the property folder, with a filename derived from the image's index in the image_links list (e.g., "0.jpg", "1.jpg", etc.). The script then writes the content of the response (the image data) to the file, effectively saving the image.
-
-If the request fails, the script prints a message indicating that the image download failed for the particular property ID. It continues this process for all image URLs associated with the property, ensuring that all available images are downloaded and saved within the corresponding property folder.
-
-
-```python
-id_list = df['id'].values
-
-import requests
-
-for id in tqdm(id_list):
-
-  page = requests.get(f'https://www.openrent.co.uk/{id}').text.replace('\r', '').replace("\n", '').replace('\xa0', ' ')
-
-  # Parse the HTML content using Beautiful Soup
-  soup = BeautifulSoup(page, 'html.parser')
-
-  image_links = [k['href'] for k in soup.find_all(class_ = "photos thumbnail mfp-image")]
-
-  work_folder = f"/content/drive/MyDrive/Project/" + str(id)
-  os.mkdir(work_folder)
-
-  for num,image_link in enumerate(image_links):
-
-    url = f"https:{image_link:3}"
-
-    # Preferred name and location to save the image
-    file_name = f"{num}.jpg"  # Change the preferred name as desired
-    save_path = f"{work_folder}/" + file_name  # Change the save location as desired
-
-    # Send a GET request to the URL
-    response = requests.get(url)
-
-    # Check if the request was successful (status code 200)
-    if response.status_code == 200:
-        # Open the file in binary write mode and write the content of the response
-        with open(save_path, 'wb') as f:
-            f.write(response.content)
-    else:
-        print("Failed to download the image: ",id)
-```
-
-
-## Image Processing
-
-Next, in another notebook, we develop a script that processes images associated with house listings, aiming to create a dataset suitable for training a machine learning model.
-
-First, we import the necessary libraries:
 ```python
 import pandas as pd  # Importing pandas library and aliasing it as pd
 import numpy as np  # Importing numpy library and aliasing it as np
@@ -653,334 +24,680 @@ from matplotlib import pyplot as plt  # Importing pyplot module from matplotlib 
 import os  # Importing os module for operating system dependent functionality
 import seaborn as sns  # Importing seaborn library and aliasing it as sns
 import warnings
-import cv2
-from tqdm import tqdm
-
 warnings.filterwarnings('ignore')
 pd.set_option('display.max_columns', None)   # Setting pandas option to display all columns in DataFrame
 plt.style.use('ggplot')  # Setting plot style to 'ggplot' from matplotlib
 ```
-### Loading and Cleaning Data
-```python
-df = pd.read_csv('/content/drive/MyDrive/House_Prices_Scraped_Data/Images Annotation - Final Doc.csv')
-df
-```
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>House ID</th>
-      <th>Bedroom</th>
-      <th>Bathroom</th>
-      <th>Kitchen</th>
-      <th>Sitting Room</th>
-      <th>Frontage</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1125181</td>
-      <td>8</td>
-      <td>3</td>
-      <td>4</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1225446</td>
-      <td>14</td>
-      <td>18</td>
-      <td>3</td>
-      <td>10</td>
-      <td>24</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1956767</td>
-      <td>14</td>
-      <td>15</td>
-      <td>9</td>
-      <td>10</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1948597</td>
-      <td>23</td>
-      <td>27</td>
-      <td>14</td>
-      <td>4</td>
-      <td>29</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2003468</td>
-      <td>28</td>
-      <td>20</td>
-      <td>2</td>
-      <td>12</td>
-      <td>48</td>
-    </tr>
-  </tbody>
-</table>
-
-### Step 2: Cleaning the data
+Next, we read in the relevant datasets.
 
 ```python
-# Removing rows where 'House ID' is null
-df = df[~df['House ID'].isnull()]
+london_df = pd.read_csv('Openrent London.csv')  # Reading data from 'Openrent London.csv' into london_df DataFrame
+birmingham_df = pd.read_csv('Openrent Birmingham.csv')  # Reading data from 'Openrent Birmingham.csv' into birmingham_df DataFrame
+liverpool_df = pd.read_csv('Openrent Liverpool.csv')  # Reading data from 'Openrent Liverpool.csv' into liverpool_df DataFrame
+glasgow_df = pd.read_csv('Openrent Glasgow.csv')  # Reading data from 'Openrent Glasgow.csv' into glasgow_df DataFrame
+manchester_df = pd.read_csv('Openrent Manchester.csv')  # Reading data from 'Openrent Manchester.csv' into manchester_df DataFrame
+```
+Then, all 5 are concatenated into one dataset.
+```python
+# Setting the 'Location' column for each DataFrame to its respective city name
+london_df['Location'] = 'London'
+birmingham_df['Location'] = 'Birmingham'
+liverpool_df['Location'] = 'Liverpool'
+glasgow_df['Location'] = 'Glasgow'
+manchester_df['Location'] = 'Manchester'
 
-# Dropping duplicate rows based on 'House ID'
-df.drop_duplicates(['House ID'], inplace=True)
+# Concatenating london_df, birmingham_df, liverpool_df, glasgow_df, and manchester_df DataFrames into one DataFrame
+# Resetting the index to avoid duplicate indices
+all_df = pd.concat([london_df, birmingham_df, liverpool_df, glasgow_df, manchester_df]).reset_index(drop=True)
 
-# Replacing 'Null' and 'N' values with NaN
-df.replace(['Null', 'N'], np.NaN, inplace=True)
+# Displaying the concatenated DataFrame
+all_df.head()
+```
+|   | id      | title                                      | description       | Bedrooms | Bathrooms | Max Tenants | Location | Deposit   | Rent PCM  | Bills Included | Broadband   | Student Friendly | Families Allowed | Pets Allowed | Smokers Allowed | DSS/LHA Covers Rent | Available From | Minimum Tenancy | Garden | Parking | Fireplace | Furnishing | EPC Not Required     | station_distances                                 | DSS Income Accepted | EPC Rating | Online Viewings | Students Only | Maximum Tenancy | DSS/LHA Covers Rent | Online Viewings | DSS Income Accepted |
+|---|---------|--------------------------------------------|-------------------|----------|-----------|-------------|----------|-----------|-----------|----------------|-------------|------------------|------------------|--------------|-----------------|---------------------|----------------|-----------------|--------|---------|-----------|------------|----------------------|---------------------------------------------------|---------------------|------------|-----------------|---------------|-----------------|---------------------|-----------------|---------------------|
+| 0 | 1993394 | Room in a Shared Flat, London, E3          | Lovely rooms a... | 3        | 1         | 3           | London   | £1,000.00 | £1,000.00 | Yes            | View Offers | Yes              | Yes              | Yes          | Yes             | No                  | Today          | 1 Months        | No     | No      | No        | Furnished  | Shared Accommodation | [['Charing Cross', '2 minute walk'], ['London ... | NaN                 | NaN        | NaN             | NaN           | NaN             | NaN                 | NaN             | NaN                 |
+| 1 | 1999634 | Room in a Shared House, Brimsdownhouse, E3 | Single-double ... | 4        | 1         | 99          | London   | £1,000.00 | £1,000.00 | No             | View Offers | Yes              | Yes              | Yes          | Yes             | NaN                 | Today          | 1 Months        | No     | No      | No        | Furnished  | Shared Accommodation | [['Charing Cross', '2 minute walk'], ['London ... | Yes                 | NaN        | NaN             | NaN           | NaN             | NaN                 | NaN             | NaN                 |
+| 2 | 2004817 | Room in a Shared Flat, London, E3          | Lovely rooms a... | 3        | 1         | 3           | London   | £1,000.00 | £1,000.00 | Yes            | View Offers | Yes              | Yes              | Yes          | Yes             | No                  | Today          | 1 Months        | No     | No      | No        | Furnished  | Shared Accommodation | [['Charing Cross', '2 minute walk'], ['London ... | NaN                 | NaN        | NaN             | NaN           | NaN             | NaN                 | NaN             | NaN                 |
+| 3 | 2009862 | Studio Flat, Craven Street, WC2N           | We are proud t... | 1        | 1         | 2           | London   | £3,919.99 | £3,397.33 | Yes            | View Offers | Yes              | No               | No           | Yes             | No                  | Today          | 6 Months        | No     | No      | No        | Furnished  | NaN                  | [['Charing Cross', '2 minute walk'], ['London ... | NaN                 | C          | NaN             | NaN           | NaN             | NaN                 | NaN             | NaN                 |
+| 4 | 2014131 | 1 Bed Flat, Craven Street, WC2N            | **BILLS INCLUD... | 1        | 1         | 2           | London   | £3,460.00 | £2,998.67 | Yes            | View Offers | Yes              | No               | No           | No              | No                  | Today          | 3 Months        | No     | No      | No        | Furnished  | NaN                  | [['Charing Cross', '2 minute walk'], ['London ... | NaN                 | C          | NaN             | NaN           | NaN             | NaN                 | NaN             | NaN                 |
+
+Where the number of unique rows is:
+```python
+print(f"Number of Unique House IDS: {all_df['id'].nunique()}")
+```
+`` Number of Unique House IDS: 3560``
+
+Now, to tidy up the dataframe.
+
+## Data Cleaning
+We focus on cleaning specific columns per time.
+
+### Whitespace Removal  in Column Names and Deduplication
+It was that noticed some column names have extra spaces (e.g., "Online Viewings ", "DSS Income Accepted "). These spaces can cause problems during data preprocessing. To avoid these issues, extra spaces were removed from these column names. Duplicate columns were also dropped for good measure.
+```python
+all_df.columns = [col.strip() for col in all_df.columns]
+
+# Drop duplicate columns
+all_df = all_df.loc[:,~all_df.columns.duplicated()]
+all_df
 ```
 
-### Step 3: Summarizing missing values
+### Cleaning the "Rent PCM" and "Deposit" Columns
+The notebook cleans the "Rent PCM" and "Deposit" columns by:
+
+1.  Removing pound signs (£) and commas using pandas' `replace` method.
+2.  Converting the columns to numerical (float) data type using `astype`.
+
+This ensures the rent and deposit values are usable for analysis and modeling.
+
+
+```python
+# Removing pound sign (£) and commas from 'Rent PCM' and 'Deposit' columns
+
+all_df['Rent PCM'] = all_df['Rent PCM'].str.replace('£', '').str.replace(',', '')  # Removing pound sign and commas from 'Rent PCM' column
+all_df['Deposit'] = all_df['Deposit'].str.replace('£', '').str.replace(',', '')  # Removing pound sign and commas from 'Deposit' column
+
+# Converting the rent values to integers
+
+all_df['Rent PCM'] = all_df['Rent PCM'].astype(float)  # Converting 'Rent PCM' column values to float type
+all_df['Deposit'] = all_df['Deposit'].astype(float)  # Converting 'Deposit' column values to float type
+```
+### Cleaning the "Minimum Tenancy" Column
+The notebook cleans the "Minimum Tenancy" column by:
+
+1.  Removing "Months" and extra spaces using string manipulation.
+2.  Converting the column to numerical (float) format using `astype`.
+
+This ensures the values are usable for calculations.
+
+```python
+# Removing 'Months' and extra spaces from 'Minimum Tenancy' column and converting values to float
+all_df['Minimum Tenancy'] = all_df['Minimum Tenancy'].str.replace('Months', '').str.replace(' ', '') # Removing 'Months' and extra spaces from 'Minimum Tenancy' column
+all_df['Minimum Tenancy'] = all_df['Minimum Tenancy'].astype(float) # Converting 'Minimum Tenancy' column values to float
+```
+### Extracting Features from the "title" Column
+This snippet creates new columns:
+
+-   "House Type": Extracted from the beginning of the "title" column.
+-   "Address": Extracted between commas from the "title" column.
+-   "House Code": Extracted after the address from the "title" column
+
+```python
+all_df['House Type'] = all_df['title'].apply(lambda x: x.split(',')[0])  # Extracting house type from the 'title' column
+all_df['Address'] = all_df['title'].apply(lambda x: x.split(',')[1])  # Extracting address from the 'title' column
+all_df['House Code'] = all_df['title'].apply(lambda x: x.split(',')[2])  # Extracting house code from the 'title' column
+```
+## Missing Values Check and Handling
+To understand the distribution of missing values in the dataset, this code snippet generates a summary of missing values for each column.
 ```python
 # Counting missing values in each column
-non_missing_values_count = df.shape[0] - df.isnull().sum()
+missing_values_count = all_df.isnull().sum()
 
 # Calculating the proportion of missing values for each column
-non_missing_values_proportion= df.isnull().sum() / len(df)
+missing_values_proportion= all_df.isnull().sum() / len(all_df)
 
 # Combining count and proportion into one DataFrame for a clean summary
-non_missing_values_summary = pd.DataFrame({
-    'NOn Null Values': non_missing_values_count,
-    'Proportion': non_missing_values_proportion
+missing_values_summary = pd.DataFrame({
+    'Missing Values': missing_values_count,
+    'Proportion': missing_values_proportion
 })
 # Displaying the summary table
-print(non_missing_values_summary)
+print(missing_values_summary)
+```
+The summary is too long to show so rather, I would plot a bar chart instead.
+```python
+# Check for missing values and plot the count of missing values by column
+all_df.isnull().sum().plot(kind='barh', figsize=(8, 12))
+
+# Set the title of the plot
+plt.title('Count of Missing values by column')
+plt.xlabel('No. of Houses')
+plt.ylabel('Column Names')
+# Show the plot
+plt.show()
+```
+![missing data chart]('../../assets/post_images/missing data chart.png')
+
+The missing values in the categorical columns are filled in with "NA"
+```python
+# Defining unique categorical columns
+categorical_columns = ['Location', 'Bills Included', 'Student Friendly', 'Families Allowed', 'Pets Allowed',
+                      'Smokers Allowed', 'DSS/LHA Covers Rent', 'House Code', 'Garden', 'Parking', 'Fireplace',
+                      'Furnishing', 'EPC Not Required', 'DSS Income Accepted', 'House Type', 'EPC Rating',
+                      'Online Viewings', 'Students Only']
+
+# Filling missing values in categorical columns with 'Unknown'
+all_df[categorical_columns] = all_df[categorical_columns].fillna('Unknown')
 ```
 
-| Columns | Non Null Values | Proportion |
-| -------- |  --------  |  -------  |
-|House ID|  3555 | 0.000000 |
-| Bedroom | 3107 | 0.126020 |
-| Bathroom | 3003 | 0.155274 |
-| Kitchen | 2923 | 0.177778 |
-| Sitting Room | 2322 | 0.346835 |
-| Frontage | 1536 | 0.567932 |
-
-This shows that the region with the least images is the frontage.
-
-### Step 4: Data filtering
-
-For the model to work optimally, it needs features with complete information. Therefore, this notebook defines a list of features and then filters the data to include only entries with complete information for these features. This ensures a dataset where each house has a corresponding image for each selected feature.
+### Exploratory data analysis (EDA)
+To begin the EDA process, I explore the unique values in each variable. 
 
 ```python
-## Selecting Rows with Complete Information for Selected Columns
+# Selecting columns with object data type
+object_cols = all_df.select_dtypes('object').columns
 
-# List of columns to consider
-interested_cols = ['Bedroom', 'Bathroom', 'Kitchen', 'Sitting Room']
+# Iterating through each object column
+for col in object_cols:
+    # Printing the number of unique values for the current column
+    print(f'No of unique {col}(s) is {all_df[col].nunique()}')
+```
+And display the value counts for each categorical variable
 
-# Filtering DataFrame to exclude rows with any null values in interested columns
-main_df = df[~df[interested_cols].isnull().any(axis=1)]
+```python
+for col in categorical_columns:
 
-# Resetting index to ensure consecutive integer index after filtering
-main_df.reset_index(drop=True, inplace=True)
+# Printing value counts for each categorical column
 
-# Displaying the filtered DataFrame
-main_df
+print(f"Value counts for {col} \n\n{all_df[col].value_counts()} \n\n")
 ```
 
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>House ID</th>
-      <th>Bedroom</th>
-      <th>Bathroom</th>
-      <th>Kitchen</th>
-      <th>Sitting Room</th>
-      <th>Frontage</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1125181</td>
-      <td>8</td>
-      <td>3</td>
-      <td>4</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1225446</td>
-      <td>14</td>
-      <td>18</td>
-      <td>3</td>
-      <td>10</td>
-      <td>24</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1956767</td>
-      <td>14</td>
-      <td>15</td>
-      <td>9</td>
-      <td>10</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1948597</td>
-      <td>23</td>
-      <td>27</td>
-      <td>14</td>
-      <td>4</td>
-      <td>29</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2003468</td>
-      <td>28</td>
-      <td>20</td>
-      <td>2</td>
-      <td>12</td>
-      <td>48</td>
-    </tr>
-  </tbody>
-</table>
+Next, I visualize the value counts in a bar plot as follows:
+```python
+# Set the maximum number of categories to plot
+MAX_CATEGORIES = 20
 
-### Image Merging Functions
-**Adding Borders:** The script defines a function `add_border` that takes an image, border color, and border size as input. It adds a border around the image using the Pillow (PIL) library's `ImageOps` module.
+# Iterate through each categorical column
+for col in categorical_columns:
+    # Generate a count plot for the current column
+    all_df[col].value_counts().nlargest(MAX_CATEGORIES).plot(kind='barh', figsize=(6, 6))
 
-**Merging Images:** Another function,  `merge_images`, takes several arguments:
+    # Set the title of the plot
+    plt.title(f'Count Plot of {col} ({all_df[col].nunique()})')
 
--   `base_folder`: The location where the house images are stored.
--   `image_paths`: A list containing filenames of the images to be merged
--   `output_name`: The filename for the resulting merged image.
--   `target_size`: The desired size for each image after resizing.
--   `border_color`: The color for the border added around each image.
--   `border_size`: The width of the border. The function resizes and adds borders to the specified images before merging them into a single image with a predefined layout. This creates a combined image representation for each house, potentially containing all available images of its features.
+    plt.xlabel('No. of Houses')
+
+    plt.ylabel(f'{col}')
+    # Show the plot
+    plt.show()
+```
+For brevity's sake, I display only two of the countplots. A countplot was plotted for each categorical variable and all can be viewed in the full notebook.
+
+![missing data chart]('../../assets/post_images/missing data chart.png')
+
+### Correlation Heatmap
+
+The script defines a custom function called `correlation_table_and_heatmap ()` to investigate the relationships between numerical features in the dataset through investigation. To create a heatmap visualization, this function uses the `heat map ()` function from the Seaborn library to compute the correlation matrix for the input Data Frame.
+This visualizes the strength and direction of linear relationships between features which can guide feature selection and help identify potential multicollinearity issues.
 
 ```python
-# Importing necessary module
-from PIL import Image, ImageOps
-
-# Function to add a border around the given image
-def add_border(image, border_color, border_size):
+def correlation_table_and_heatmap(df):
     """
-    Add a border around the given image.
+    Generate correlation table and heatmap for the given DataFrame.
+
+    Parameters:
+    df (DataFrame): Input DataFrame for which correlation table and heatmap will be generated.
+
+    Returns:
+    DataFrame: Correlation table.
+
     """
-    return ImageOps.expand(image, border=border_size, fill=border_color)
+    # Calculate correlation table
+    corr_table = df.select_dtypes([int,float]).corr()
 
-# Function to merge images and save the resulting image
-def merge_images(base_folder, image_paths, output_name, target_size=(200, 200), border_color="white", border_size=5):
-    # List to store resized and bordered images
-    images = []
+    # Create heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(corr_table, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
+    plt.title('Correlation Heatmap')
+    plt.show()
 
-    # Load, resize, and add border to images
-    for path in image_paths:
-        img = Image.open(base_folder + '/' + path + '.jpg')
-        img = img.resize(target_size)
-        img = add_border(img, border_color, border_size)
-        images.append(img)
+    return corr_table
 
-    # Calculate the size of the resulting image
-    result_width = target_size[0] * 2 + border_size * 2
-    result_height = target_size[1] * 2 + border_size * 2
-
-    # Create a blank image with a size sufficient to contain all the resized images
-    result = Image.new("RGB", (result_width, result_height), border_color)
-
-    # Paste resized images into the blank image
-    for i in range(len(images)):
-        x = i % 2
-        y = i // 2
-        result.paste(images[i], (x * target_size[0] + border_size, y * target_size[1] + border_size))
-
-    # Save the resulting image
-    result.save(output_name)
+# Calling the function to generate correlation table and heatmap for all_df DataFrame
+correlation_table_and_heatmap(all_df)
 ```
-### Combining Images and Handling Errors
-The script iterates through each row (house) in the filtered DataFrame. For each house, it:
+|                 | id        | Bedrooms  | Bathrooms | Max Tenants | Deposit   | Rent PCM  | Minimum Tenancy |
+|-----------------|-----------|-----------|-----------|-------------|-----------|-----------|-----------------|
+| id              | 1.000000  | 0.021652  | 0.011819  | 0.012655    | -0.075046 | -0.054286 | 0.011955        |
+| Bedrooms        | 0.021652  | 1.000000  | 0.592255  | 0.220332    | -0.102679 | -0.046768 | 0.027874        |
+| Bathrooms       | 0.011819  | 0.592255  | 1.000000  | 0.136409    | -0.017653 | 0.034510  | 0.059208        |
+| Max Tenants     | 0.012655  | 0.220332  | 0.136409  | 1.000000    | 0.042130  | 0.208167  | -0.089258       |
+| Deposit         | -0.075046 | -0.102679 | -0.017653 | 0.042130    | 1.000000  | 0.730967  | 0.229101        |
+| Rent PCM        | -0.054286 | -0.046768 | 0.034510  | 0.208167    | 0.730967  | 1.000000  | -0.031098       |
+| Minimum Tenancy | 0.011955  | 0.027874  | 0.059208  | -0.089258   | 0.229101  | -0.031098 | 1.000000        |
 
-1.  Extracts the house ID.
-2.  Defines the base folder where the house's images are stored.
-3.  Extracts a list of image paths based on the interested feature columns.
-4.  Defines the output filename for the merged image.
-5.  Attempts to merge the images using the `merge_images` function.
-    -   If successful, a combined image is created for the house.
-    -   If a `FileNotFoundError` occurs, it indicates missing images for that house. The script logs the house ID with the error and continues processing other houses.
+
+![missing data chart]('../../assets/post_images/missing data chart.png')
+
+### Rent Price Variation across Categorical Features
+
+**Understanding how rent prices differ across different categories can be valuable for analyzing which features are most important and interpreting the results of a model.**
+
+This can be done using Pandas. Using,
+
+1.  We use the `groupby` function to group the data based on each categorical feature (e.g., neighborhood, apartment type).
+2.  Within each group, we use the `mean` function to calculate the average rent price.
+3.  We can then focus on the top categories in each group to see how rent prices vary the most.
+
+This approach helps us identify patterns between rent prices and different categories in our data.
 
 ```python
-# List to store house IDs with errors
-error_ids = []
+# Set the maximum number of categories to plot
+MAX_CATEGORIES = 20
 
-# Iterating through each row in the DataFrame
-for num in tqdm(range(main_df.shape[0])):
-    # Extracting house ID from the DataFrame
-    house_id = main_df.loc[num, 'House ID']
+# Iterate through each categorical column
+for col in categorical_columns:
+    top_categories = all_df[col].value_counts().nlargest(MAX_CATEGORIES).index.values.tolist()
 
-    # Defining the base folder where images are stored
-    base_folder = f'/content/drive/MyDrive/House_Prices_Scraped_Data/Openrent Images/{house_id}'
+    # Grouping by the current categorical column and calculating the mean rent for top categories
+    all_df.groupby(col)['Rent PCM'].mean()[top_categories].plot(kind='barh', figsize=(6, 6))
 
-    # Extracting image paths for interested columns
-    image_paths = main_df.loc[num, interested_cols].values.tolist()
+    # Set the title of the plot
+    plt.title(f'Bar Plot of {col} ')
 
-    # Defining the output name for the combined image
-    output_name = f'/content/drive/MyDrive/House_Prices_Scraped_Data/Combined Images/{house_id}.jpg'
+    plt.xlabel(f"Avg. Rent Price(£)")
 
-    try:
-        # Merging images and saving the combined image
-        merge_images(base_folder, image_paths, output_name, target_size=(480, 480), border_color="white", border_size=10)
-    except FileNotFoundError:
-        # Handling file not found error
-        error_ids.append(house_id)
-        print(f"File Found error: House ID {house_id} ")
-
+    # Show the plot
+    plt.show()
 ```
 
-The script encounters errors during the initial attempt to merge images for some houses. These errors likely results from missing image files. To address this, the script creates a list containing house IDs with these errors. It then isolates these problematic houses in a separate DataFrame. The script iterates through each house on this "error list" and tries to merge their images again. If successful, a combined image is created. However, if the `FileNotFoundError` persists, it indicates missing image files and the house ID is added back to the error list. This process essentially refines the error handling by focusing on houses with missing images and attempting to create merged images for them again.
+Again, for brevity, I include only two of the plots
+
+![missing data chart]('../../assets/post_images/missing data chart.png')
+
+## Data Preprocessing
+To start off this step, first we h
 
 ```python
-error_ids = ['2003463',
- '2008202',
- '2011088',
- '2013130',
- '1993243',
- '2011782',
- '1980041',
- '1964312',
- '2008197']
+MIN_FREQ = 20
 
-error_df = main_df[main_df['House ID'].isin(error_ids)].reset_index(drop = True)
+for col in  categorical_columns:
+    # Filtering out top categories based on minimum frequency
+    top_categories = (all_df[col].value_counts() >= MIN_FREQ).index.values.tolist()
 
-
-for num in tqdm(range(error_df.shape[0])):
-  house_id = error_df.loc[num,'House ID']
-  base_folder = f'/content/drive/MyDrive/House_Prices_Scraped_Data/Openrent Images/{house_id}'
-
-  image_paths = error_df.loc[num, interested_cols].values.tolist()
-
-  output_name = f'/content/drive/MyDrive/House_Prices_Scraped_Data/Combined Images/{house_id}.jpg'
-  try :
-    merge_images(base_folder, image_paths, output_name, target_size=(480, 480), border_color="white", border_size=10)
-  except FileNotFoundError:
-    error_ids.append(house_id)
-    print(f"File Found error: House ID {house_id} ")
+    # Replacing categories not in top categories with 'other'
+    all_df.loc[~all_df[col].isin(top_categories), col] = 'other'
 ```
 
-### Generating List of Processed Houses
+### One-Hot Encoding Categorical Features
+Many machine learning models can't handle text labels like "high" or "low". So, we need to convert these categories (like apartment type) into numbers.
 
-After processing all houses (including re-attempts for errors), the script creates a final list containing only house IDs with successfully processed images. 
+One way to do this is called one-hot encoding. I use a special function (`pd.get_dummies`) to create new columns for each category. If a data point belongs to that category, it gets a 1, otherwise it gets a 0.
+
+Finally, I combine these new one-hot encoded columns with the original numerical features to create a new dataset ready for our machine learning models.
 
 ```python
-# Filtering out rows with error house IDs
-non_error_df = main_df[~main_df['House ID'].isin(error_ids)].reset_index(drop=True)
+dummy_df = pd.get_dummies(all_df , columns = categorical_columns)
+```
+### Pre-processing Data and Features selection
+Machine learning models are picky eaters! They need data in a specific format to work their magic. To get our data ready, we do some pre-processing and feature selection. First, we toss out unnecessary columns like titles and descriptions (stored in a list called 'drop_columns') because they won't help predict rent prices. Then, we grab all the good stuff from our prepared data (`dummy_df`) and put it in a toolbox called 'main_cols'. These are the features our models will use to learn. We also tell the models what we're trying to predict: the rent price per month (stored in the 'Rent PCM' column). This is our target variable. Finally, we patch any holes in our data by filling in missing values with the middle value (median) of each column. Now our data is clean and ready to be fed to the machine learning models!
 
-# Saving the list of processed house IDs to a CSV file
-non_error_df[['House ID']].to_csv('Processed Images Houses List.csv', index=False)
+```python
+# Define columns to drop
+drop_columns = ['title', 'description', 'Broadband', 'Available From', 'station_distances', 'Maximum Tenancy', 'Address', 'id', 'Deposit', 'Rent PCM']
 
-# Displaying the DataFrame without error entries
-non_error_df
+# Select main columns by excluding columns in drop_columns
+main_cols = dummy_df.columns.difference(drop_columns)
+
+# Select features (X) and target variable (y)
+X = dummy_df[main_cols]
+y = dummy_df['Rent PCM']
+
+# Fill missing values in X with median
+X.fillna(X.median(), inplace=True)
 ```
 
-In the next part, we would explore the Machine Learning implementation.
+##  Modeling and Evaluation
+
+**Finding the best champion!**
+
+This part is all about finding the superstar model that predicts rent prices the most accurately. Here's what we do:
+
+1.  **Grabbing the tools:** First, we get the necessary equipment, like libraries for building and testing models (CatBoost, scikit-learn, XGBoost).
+2.  **Choosing the fighters:** We pick different models to compete, including Linear Regression, Random Forest, XGBoost and CatBoost.
+3.  **Setting the judges:** To decide the winner, we enlist evaluators like mean squared error, mean absolute error, and R-squared score. We also use tools to split our data for training and testing the models (train_test_split) and for cross-validation (cross_val_score).
+
+```python
+# Installing required libraries
+
+!pip install catboost -qq  # Installing CatBoost library quietly
+
+# Importing required libraries
+from catboost import CatBoostRegressor  # For CatBoostRegressor model
+from sklearn.ensemble import RandomForestRegressor  # For RandomForestRegressor model
+from xgboost import XGBRegressor  # For XGBRegressor model
+from sklearn.linear_model import LinearRegression  # For LinearRegression model
+from sklearn.model_selection import train_test_split, cross_val_score  # For train-test split and cross-validation
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score  # For evaluation metrics
+import random  # For generating random numbers
+import os  # For operating system dependent functionality
+
+```
+## Helper Codes and Functions
+
+**Making evaluation a breeze!**
+
+To make it easier to compare and visualize how well our models perform, the code uses some helpful tricks:
+
+1.  **Scoreboards:** The code creates dictionaries like 'mean_absolute_errors_results' to store scores for each model (MAE, RMSE, R-squared).
+    
+2.  **Grading function:** A function called `compute_metrics` takes a model's predictions and calculates its scores, adding them to the appropriate scoreboard.
+    
+3.  **Visualization champion:** The `plot_results` function uses these scores to create charts that show how each model compares visually (using Matplotlib).
+    
+4.  **Keeping it consistent:** To ensure our results are reliable and can be reproduced, a `set_seed` function sets a random number for all the models. This makes sure things run the same way each time.
+    
+5.  **Splitting the data:** Finally, the code uses `train_test_split` from scikit-learn to divide our data into training and testing sets (70% training, 30% testing). This way, we can train the models on the training data and test their performance on unseen data (testing data). To make sure the split is fair and random every time, the code shuffles the data before splitting and sets a random seed value.
+
+```python
+# Dictionary to store the different metric results
+
+mean_absolute_errors_results = {}  # Dictionary to store mean absolute error results
+root_mean_squared_errors_results = {}  # Dictionary to store root mean squared error results
+r2_scores_results = {}  # Dictionary to store R-squared scores results
+```
+
+```python
+def compute_metrics(y_test, preds, model_name):
+    """
+    Compute evaluation metrics for a model and store the results in dictionaries.
+
+    Parameters:
+    y_test (array-like): True target values.
+    preds (array-like): Predicted target values.
+    model_name (str): Name of the model.
+
+    """
+    # Compute evaluation metrics
+    rmse = mean_squared_error(y_test, preds, squared=False)
+    root_mean_squared_errors_results[model_name] = rmse
+    print(f'Root Mean Squared Error: {rmse}')
+
+    mae = mean_absolute_error(y_test, preds)
+    mean_absolute_errors_results[model_name] = mae
+    print(f'Mean Absolute Error: {mae}')
+
+    r_squared = r2_score(y_test, preds)
+    r2_scores_results[model_name] = r_squared
+    print(f'R2 Score: {r_squared}')
+
+
+def plot_result(log_on=True):
+    """
+    Plot the evaluation metrics stored in dictionaries.
+
+    Parameters:
+    log_on (bool): Whether to plot the results on a logarithmic scale.
+
+    """
+    dict_list = [mean_absolute_errors_results, root_mean_squared_errors_results, r2_scores_results]
+    names = ['MAE', 'RMSE', 'R2_Score']
+    units = ['£','£', '']
+    # Define the figure and subplot layout
+    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(18, 5))
+
+    plt.subplots_adjust( wspace=0.4)
+
+
+    # Loop through each dictionary and plot it on a separate subplot
+    for i, data_dict in enumerate(dict_list):
+        keys = list(data_dict.keys())
+        values = list(data_dict.values())
+        axes[i].bar(keys, values, log=log_on)
+        axes[i].set_xticklabels(keys, rotation=90)
+        axes[i].set_xlabel("Models")
+        axes[i].set_ylabel(f"{names[i]} ({units[i]})")
+        axes[i].set_title(f"{names[i]}")
+
+    # Set the overall plot title
+    fig.suptitle("Barcharts for the results")
+
+    # Show the plot
+    plt.show()
+
+SEED = 42
+
+def set_seed(seed=42):
+    """
+    Set random seed for reproducibility.
+
+    Parameters:
+    seed (int): Random seed value.
+
+    """
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+
+set_seed(SEED)
+
+random_state = SEED
+```
+
+Now, we can use our new `train_test_split` to split the data
+
+```python
+from sklearn.model_selection import train_test_split
+
+# Set the test size to 20% of the data and enable shuffling
+test_size = 0.20
+shuffle = True
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, shuffle=shuffle, random_state = 12)
+```
+
+### Linear Regresssion Model
+
+**Putting the first model to the test!**
+
+The code starts with a basic model called Linear Regression. This model is trained using the `fit` method on the training data (remember X_train and y_train?).
+
+After training, the model is evaluated using our `compute_metrics` function. This function calculates how well the model performed and stores the scores under the name "linear_reg".
+
+Finally, the model makes predictions on unseen data (X_test) using the `predict` method. 
+
+```python
+lr = LinearRegression()  # Initializing Linear Regression model
+lr.fit(X_train, y_train)  # Fitting the model on training data
+preds = lr.predict(X_test)  # Making predictions on test data
+
+# Evaluating the model on the test set
+compute_metrics(y_test, preds, 'linear_reg')
+```
+
+> Root Mean Squared Error: 106107506206156.27 
+> Mean Absolute Error: 6862061956432.146 
+> R2 Score: -5.648975004964466e+21
+
+Nex, we fit a Random Forest Regressor
+```python
+rf = RandomForestRegressor(n_estimators=500, random_state=42, max_depth=12)  # Initializing RandomForestRegressor model
+rf.fit(X_train, y_train)  # Fitting the model on training data
+preds = rf.predict(X_test)  # Making predictions on test data
+
+# Evaluating the model on the test set
+compute_metrics(y_test, preds, 'random_forest')
+```
+>Root Mean Squared Error: 614.3276659279121
+> Mean Absolute Error: 373.54729775606614 
+> R2 Score: 0.8106446475014433
+
+## XGBoost & CatBoost
+**Training the tree-based challengers!**
+
+The study throws two more powerful models into the ring: XGBoost and CatBoost. These models are like decision trees, but with a twist: they combine the predictions of many trees to get a more accurate result.
+
+To train these models, the code sets some important parameters like the number of trees, their depth, and how much they learn from each piece of data. Here's what the code does for both models:
+
+1.  **Setting Up:** The code initializes the models (XGBoost and CatBoost) and defines some key settings like the number of trees (350 for XGBoost, 550 for CatBoost) and their learning rate (0.08 for both).
+    
+2.  **Training Time:** The models are then trained on the training data (X_train and y_train), allowing them to learn the patterns that predict rent prices.
+    
+3.  **Testing Their Might:** Once trained, the models make predictions on unseen data (X_test). These predictions are stored in a variable called 'preds'.
+    
+4.  **Evaluating Performance:** Finally, the `compute_metrics` function is used to evaluate how well each model performed on the test data. This helps us compare the models and see which one is the champion rent price predictor.
+    
+Stay tuned to find out which model reigns supreme!
+
+```python
+xgb = XGBRegressor(n_estimators=350, max_depth=8, learning_rate=0.08, colsample_bytree=0.6, verbosity=0,
+                   random_state=12, subsample=0.8)  # Initializing XGBRegressor model
+xgb.fit(X_train, y_train)  # Fitting the model on training data
+preds = xgb.predict(X_test)  # Making predictions on test data
+
+# Evaluating the model on the test set
+compute_metrics(y_test, preds, 'xgboost')
+```
+> Root Mean Squared Error: 553.2957812716264 
+> Mean Absolute Error: 333.05576106125045 
+> R2 Score: 0.8463996675985181
+
+```python
+cat = CatBoostRegressor(n_estimators=550, max_depth=8, learning_rate=0.08, verbose=0,
+                   random_state=12, subsample=0.8)  # Initializing CatBoostRegressor model
+cat.fit(X_train, y_train)  # Fitting the model on training data
+preds = cat.predict(X_test)  # Making predictions on test data
+
+# Evaluating the model on the test set
+compute_metrics(y_test, preds, 'catboost')
+```
+>Root Mean Squared Error: 582.0627832250287
+> Mean Absolute Error: 363.1203664068861 
+> R2 Score: 0.8300124552637641
+
+
+### Ensembling( XGboost + CatBoost)
+
+**Teaming Up for the Toughest Challenge!**
+
+Now it's time for the main event: using ensemble methods! These combine multiple models, like XGBoost and CatBoost (both superstars in the machine learning world), to create an even more accurate rent price predictor.
+
+Here's why ensembles are so powerful:
+
+-   **Strength in Numbers:** By combining different models, we get a broader perspective and can capture even more complex patterns in the data.
+-   **Better Than One:** Each model might have its own strengths and weaknesses. Ensembles learn from each other, potentially overcoming those weaknesses and leading to better overall results.
+
+So, how does it work?
+
+1.  **Introducing the Champions:** The code sets up two strong models: XGBoost and CatBoost. These models are trained on the training data (X_train and y_train) to learn the secrets of rent prices.
+    
+2.  **Pooling the Power:** Once trained, a special trick called "Voting Regressor" combines the predictions from both XGBoost and CatBoost. This way, we leverage the strengths of both models to get an even better prediction.
+    
+3.  **Evaluating the Champions:** Finally, we use our `compute_metrics` function to compare how well each model (including the ensemble) performs on unseen data (X_test). This helps us identify the ultimate rent price prediction champion!
+
+```python
+from sklearn.ensemble import VotingRegressor
+
+# Ensemble the models
+ensemble_model = VotingRegressor([('xgb', xgb), ('cat', cat)])
+
+# Fit the ensemble model on the training data
+ensemble_model.fit(X_train, y_train)
+
+preds = ensemble_model.predict(X_test)  # Making predictions on test data
+
+# Evaluating the model on the test set
+compute_metrics(y_test, preds, 'ensemble')
+```
+>Root Mean Squared Error: 557.2444752325782 
+>Mean Absolute Error: 340.7311329897497 
+>R2 Score: 0.8441994521003529
+
+Now we can plot the metrics of each of our competing models to see how they fare by calling our `plot_result()` from earlier.
+```python
+plot_result()
+```
+![missing data chart]('../../assets/post_images/missing data chart.png')
+
+### Models Feature Importances
+
+**Understanding the Key Players: Feature Importance**
+
+Now that we've trained our models, it's crucial to understand which features play the most significant role in predicting rent prices. This is where feature importance comes in!
+
+Feature importance tells us how much each feature contributes to the model's predictions. Features with higher importance scores have a greater influence on the model's decision-making process.
+
+To visualize this, we can create feature importance plots. These plots are like bar charts that show each feature's importance score. Here's what the code snippet does to achieve this:
+
+```python
+def plot_feature_importance(importance,names,model_type,n=30):
+
+    #Create arrays from feature importance and feature names
+    feature_importance = np.array(importance)
+    feature_names = np.array(names)
+
+    #Create a DataFrame using a Dictionary
+    data={'feature_names':feature_names,'feature_importance':feature_importance}
+    fi_df = pd.DataFrame(data)
+    fi_df=fi_df.nlargest(n, ['feature_importance'], keep='first')
+    #Sort the DataFrame in order decreasing feature importance
+    fi_df.sort_values(by=['feature_importance'], ascending=False,inplace=True)
+
+    #Define size of bar plot
+    plt.figure(figsize=(10,8))
+    #Plot Searborn bar chart
+    sns.barplot(x=fi_df['feature_importance'], y=fi_df['feature_names'])
+    #Add chart labels
+    plt.title(model_type + ' FEATURE IMPORTANCE')
+    plt.xlabel('FEATURE IMPORTANCE')
+    plt.ylabel('FEATURE NAMES')
+
+plot_feature_importance(rf.feature_importances_,main_cols,'RANDOM FOREST')
+```
+![missing data chart]('../../assets/post_images/missing data chart.png')
+
+```python
+def plot_xgboost_feature_importance(xgb_model, importance_type='weight', figsize=(10, 8),n = 30):
+    """
+    Plot feature importance for an XGBoost model.
+
+    Parameters:
+    xgb_model (xgboost.XGBModel): The trained XGBoost model.
+    importance_type (str): Type of feature importance to plot. Default is 'weight'.
+    figsize (tuple): Figure size for the plot. Default is (10, 6).
+    n(int): Number of features to display
+    """
+
+    # Extract feature importance
+    importance = xgb_model.get_booster().get_score(importance_type=importance_type)
+
+    # Normalize importance scores
+    total = sum(importance.values())
+    for key in importance:
+        importance[key] /= total
+
+    # Sort the importance dictionary by values
+    sorted_importance = sorted(importance.items(), key=lambda x: x[1], reverse=False)
+
+    # Plotting feature importance
+    features, scores = zip(*sorted_importance[-n:])
+    plt.figure(figsize=figsize)
+    plt.barh(range(len(features)), scores, align='center')
+    plt.yticks(range(len(features)), features)
+    plt.xlabel('Feature Importance')
+    plt.ylabel('Features')
+    plt.title('XGBoost Feature Importance')
+    plt.show()
+
+plot_xgboost_feature_importance(xgb)
+```
+![missing data chart]('../../assets/post_images/missing data chart.png')
+
+```python
+plot_feature_importance(cat.get_feature_importance(),main_cols,'CATBOOST')
+```
+![missing data chart]('../../assets/post_images/missing data chart.png')
+
+### Preparation for deployment: Saving models and categories
+Our machine learning models have been trained and battled it out to find the ultimate rent price predictor. But their knowledge is valuable beyond this competition! To ensure we can use these powerful models in the future, this step focuses on saving them for later use, along with the processed categorical data they were trained on. This will allow us to deploy the models in real-world applications, like an automated rent price estimation tool.
+
+```python
+import json
+
+# Define your categorical columns and DataFrame
+categorical_columns = ['Location', 'Bills Included', 'Student Friendly', 'Families Allowed', 'Pets Allowed',
+                       'Smokers Allowed', 'DSS/LHA Covers Rent', 'House Code', 'Garden', 'Parking', 'Fireplace',
+                       'Furnishing', 'EPC Not Required', 'DSS Income Accepted', 'House Type', 'EPC Rating',
+                       'Online Viewings', 'Students Only']
+
+# Assuming your DataFrame is named 'df'
+# Generate dictionary to store unique values for each categorical column
+categories_dict = {}
+for col in categorical_columns:
+    categories_dict[col] = all_df[col].unique().tolist()
+
+# Save dictionary to JSON file
+with open('categories.json', 'w') as json_file:
+    json.dump(categories_dict, json_file, indent=4)
+```
