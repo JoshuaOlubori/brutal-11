@@ -1352,3 +1352,5 @@ R2_score 0.17762895513012522
 
 ## Conclusion
 This air quality analysis provides valuable insights into pollution levels and potential influencing factors across several cities. The identified trends and patterns offer a foundation for further investigation and potential air quality improvement initiatives.
+
+The full notebook can be viewed on Google Colab [here](https://colab.research.google.com/drive/1v5ExfV6FIsWYEic-r-OQLnxpKK2dkNgn?usp=sharing)

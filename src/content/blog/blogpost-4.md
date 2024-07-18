@@ -732,10 +732,10 @@ We started with Linear Regression, a simple approach that assumes a straight-lin
 </table>
 
 
--   Big Errors: Linear Regression's errors were very high, meaning its predictions were far from the actual prices. This makes them unreliable for real-world use.
--   Low R-squared: The R-squared score, which shows how well a model fits the data, was also very low. This indicates Linear Regression did a poor job capturing the complex patterns that influence house prices.
+-   **Big Errors**: Linear Regression's errors were very high, meaning its predictions were far from the actual prices. This makes them unreliable for real-world use.
+-   **Low R-squared**: The R-squared score, which shows how well a model fits the data, was also very low. This indicates Linear Regression did a poor job capturing the complex patterns that influence house prices.
 
-Why Linear Regression Struggled?
+### Why Linear Regression Struggled?
 
 Real estate prices are influenced by many factors like location, property features, and local economics. These factors can interact with each other in non-linear ways. Linear Regression, with its straight line approach, couldn't capture these complexities, leading to poor results.
 
@@ -745,7 +745,7 @@ The key takeaway here is that for house prices, we need models that can handle n
 
 After seeing the limitations of Linear Regression, we looked at Random Forest Regression, a more powerful technique.
 
--   Better Results: Random Forest performed much better than Linear Regression. Its errors (RMSE and MAE) were significantly lower, and its R-squared score jumped to 0.81, indicating it captured a significant portion of the patterns in house prices
+-   **Better Results**: Random Forest performed much better than Linear Regression. Its errors (RMSE and MAE) were significantly lower, and its R-squared score jumped to 0.81, indicating it captured a significant portion of the patterns in house prices
 
 <table border="1">
     <tr>
@@ -767,16 +767,16 @@ After seeing the limitations of Linear Regression, we looked at Random Forest Re
 </table>
 
 
-Why Did Random Forest Shine?
+***Why Did Random Forest Shine?***
 
 Here's what makes Random Forest strong:
 
--   Handles Complexity: Unlike Linear Regression, Random Forest can capture non-linear relationships between features and prices. This allows it to better fit the intricate patterns in house price data.
--   Strength in Numbers: Random Forest combines multiple decision trees, making it less prone to overfitting and more generalizable to unseen data.
--   Feature Importance: Random Forest tells us which features are most important for prediction. This knowledge can be used to improve the model further.
--   Data Friendly: Random Forest works well with different data types (numbers and categories), which is helpful for house price data that often has a mix of both.
+-   **Handles Complexity**: Unlike Linear Regression, Random Forest can capture non-linear relationships between features and prices. This allows it to better fit the intricate patterns in house price data.
+-   **Strength in Numbers**: Random Forest combines multiple decision trees, making it less prone to overfitting and more generalizable to unseen data.
+-   **Feature Importance**: Random Forest tells us which features are most important for prediction. This knowledge can be used to improve the model further.
+-   **Data Friendly**: Random Forest works well with different data types (numbers and categories), which is helpful for house price data that often has a mix of both.
 
-Random Forest vs. Linear Regression: A Clear Winner
+***Random Forest vs. Linear Regression: A Clear Winner***
 
 Random Forest's ability to handle non-linearity and combine multiple trees makes it a much better choice for house price prediction than Linear Regression. While there's still room for improvement in accuracy, Random Forest is a significant step forward.
 
@@ -805,9 +805,9 @@ Building on the success of Random Forest, we explored XGBoost, a powerful tree-b
 </table>
 
 
--   Even Better Results: XGBoost achieved a lower RMSE (553.29), lower MAE (333.05), and a higher R-squared score (0.85) compared to Random Forest. This means it made even more accurate predictions and explained a larger portion of the variation in house prices.
+-   **Even Better Results**: XGBoost achieved a lower RMSE (553.29), lower MAE (333.05), and a higher R-squared score (0.85) compared to Random Forest. This means it made even more accurate predictions and explained a larger portion of the variation in house prices.
 
-Why XGBoost Reigns Supreme
+***Why XGBoost Reigns Supreme***
 
 Here's what makes XGBoost exceptional:
 
@@ -848,59 +848,58 @@ We also investigated CatBoost, another powerful tree-based ensemble model. While
 </table>
 
 
-CatBoost's Strengths
+***CatBoost's Strengths***
 
 Here's what makes CatBoost stand out:
 
--   Handling Categories like a Champ: CatBoost excels at dealing with categorical features, which are common in house price data. It uses special techniques to handle them effectively, eliminating the need for manual work.
--   Automatic Feature Engineering: CatBoost can automatically create new features from existing data. This can uncover hidden patterns and improve model performance.
--   Missing Value Ninja: CatBoost has built-in mechanisms to handle missing data, which is a frequent issue in real-world datasets like the one we used.
--   Ensemble Power: Like XGBoost, CatBoost combines multiple decision trees for better overall predictions.
+-   **Handling Categories like a Champ**: CatBoost excels at dealing with categorical features, which are common in house price data. It uses special techniques to handle them effectively, eliminating the need for manual work.
+-   **Automatic Feature Engineering**: CatBoost can automatically create new features from existing data. This can uncover hidden patterns and improve model performance.
+-   **Missing Value Ninja**: CatBoost has built-in mechanisms to handle missing data, which is a frequent issue in real-world datasets like the one we used.
+-   **Ensemble Power**: Like XGBoost, CatBoost combines multiple decision trees for better overall predictions.
 
-A Valuable Alternative
+***A Valuable Alternative***
 
 While CatBoost didn't take the top spot, its strong performance and unique features make it a valuable alternative for house price prediction.
 
--   Saves Time and Effort: CatBoost's automatic handling of categorical features and feature engineering saves time and effort in data pre-processing, without sacrificing accuracy.
+-   **Saves Time and Effort**: CatBoost's automatic handling of categorical features and feature engineering saves time and effort in data pre-processing, without sacrificing accuracy.
 
 
 
 ### Teaming Up: The Ensemble Model
 Since both XGBoost and CatBoost performed well, we explored how combining their predictions might fare. We used a technique called "Ensemble Learning" to create a model that leverages the strengths of both.
 
--   Mixed Results: The Ensemble Model's RMSE (557.24) and MAE (340.73) were slightly higher than the best individual models, but its R-squared (0.84) remained strong (see Table below).
+-   **Mixed Results**: The Ensemble Model's RMSE (557.24) and MAE (340.73) were slightly higher than the best individual models, but its R-squared (0.84) remained strong (see Table below).
 
 <table border="1"> <tr> <td style="background-color: #9ECBFF; font-weight: bold;">Evaluation Metrics</td> <td style="background-color: #9ECBFF; font-weight: bold;">Results</td> </tr> <tr> <td>Root Mean Squared Error</td> <td>557.244752325782</td> </tr> <tr> <td>Mean Absolute Error</td> <td>340.7311329897497</td> </tr> <tr> <td>R-Squared Score</td> <td>0.8441994521003529</td> </tr> </table>
 
-Why Ensembles Can Be Powerful
+***Why Ensembles Can Be Powerful***
 
 Here's what makes combining models like this promising:
 
--   Strength in Numbers: An Ensemble combines the best aspects of both XGBoost and CatBoost, potentially leading to a more robust and accurate model.
--   Reduced Risk: Ensemble methods can reduce the overall error of the predictions by averaging out individual errors.
--   Wider Coverage: By combining different models, the Ensemble might capture a broader range of patterns in the house price data.
+-   **Strength in Numbers**: An Ensemble combines the best aspects of both XGBoost and CatBoost, potentially leading to a more robust and accurate model.
+-   **Reduced Risk**: Ensemble methods can reduce the overall error of the predictions by averaging out individual errors.
+-   **Wider Coverage**: By combining different models, the Ensemble might capture a broader range of patterns in the house price data.
 
-A Viable Option
+***A Viable Option***
 
 While the Ensemble Model didn't outperform the top individual model (XGBoost), it still showed good promise for house price prediction. This approach highlights the potential benefits of combining models for complex problems. By leveraging multiple models, we can potentially capture more intricate patterns and achieve better accuracy and reliability.
 
-Here's a rewritten section on the MobileNet Model in simpler and clearer language:
 
 ###  MobileNet: A Trade-Off for Resource-Constrained Settings
 
 MobileNet is a deep learning model known for its small size and efficiency. This makes it ideal for situations where computing power is limited, like using a phone app to estimate home prices.
 
--   Mixed Results: MobileNet had a higher error rate (RMSE: 1275, MAE: 919) and a lower R-squared score (0.26) compared to other models (see table). This means its predictions weren't as accurate, but it did capture some underlying patterns in the house price data.
+-   **Mixed Results**: MobileNet had a higher error rate (RMSE: 1275, MAE: 919) and a lower R-squared score (0.26) compared to other models (see table). This means its predictions weren't as accurate, but it did capture some underlying patterns in the house price data.
 
 <table border="1"> <tr> <td style="background-color: #9ECBFF; font-weight: bold;">Evaluation Metrics</td> <td style="background-color: #9ECBFF; font-weight: bold;">Results</td> </tr> <tr> <td>Root Mean Squared Error (RMSE)</td> <td>1275.2474197205843</td> </tr> <tr> <td>Mean Absolute Error (MAE)</td> <td>919.1403677581077</td> </tr> <tr> <td>R-squared (R²) Score</td> <td>0.2635583742325629</td> </tr> </table>
 
-Why MobileNet Struggled
+***Why MobileNet Struggled***
 
 Here's what might have limited MobileNet's performance:
 
--   Balancing Efficiency and Complexity: MobileNet's focus on efficiency might limit its ability to capture the full complexity of house prices. This trade-off between speed and accuracy is important to consider.
--   Data Format Mismatch: MobileNet is designed for images, while house price data is in tables. This difference in data format might make it harder for MobileNet to learn from the data effectively.
--   Fine-Tuning Needed: The model might be overfitting or underfitting the data. Adjusting the model's settings could help it find a better balance between memorizing the data and learning general patterns.
+-   **Balancing Efficiency and Complexity**: MobileNet's focus on efficiency might limit its ability to capture the full complexity of house prices. This trade-off between speed and accuracy is important to consider.
+-   **Data Format Mismatch**: MobileNet is designed for images, while house price data is in tables. This difference in data format might make it harder for MobileNet to learn from the data effectively.
+-   **Fine-Tuning Needed**: The model might be overfitting or underfitting the data. Adjusting the model's settings could help it find a better balance between memorizing the data and learning general patterns.
 
 Despite its limitations, MobileNet offers valuable insights. The lower R-squared score compared to other models suggests there's room for improvement in deep learning approaches for house price prediction, especially when dealing with complex data.
 
@@ -910,19 +909,19 @@ Despite its limitations, MobileNet offers valuable insights. The lower R-squared
 
 We also evaluated InceptionNet, a deep learning model known for handling complex patterns in images. It was included to see if it could outperform MobileNet on house price data (a different data type).
 
--   Lower Performance: InceptionNet's errors (RMSE: 1352, MAE: 940) were higher, and its R-squared score (0.17) was lower than MobileNet's (see table). This means its predictions were even less accurate.
+-   **Lower Performance**: InceptionNet's errors (RMSE: 1352, MAE: 940) were higher, and its R-squared score (0.17) was lower than MobileNet's (see table). This means its predictions were even less accurate.
 
 <table border="1"> <tr> <td style="background-color: #9ECBFF; font-weight: bold;">Evaluation Metrics</td> <td style="background-color: #9ECBFF; font-weight: bold;">Results</td> </tr> <tr> <td>Root Mean Squared Error (RMSE)</td> <td>1352.11513186377</td> </tr> <tr> <td>Mean Absolute Error (MAE)</td> <td>940.555313181322</td> </tr> <tr> <td>R-squared (R²) Score</td> <td>0.1721021259539165</td> </tr> </table>
 
-Why InceptionNet Stumbled
+***Why InceptionNet Stumbled***
 
 Here's what might explain InceptionNet's struggles:
 
--   Too Complex for This Task: InceptionNet's strength in handling complex image patterns might be a weakness here. Its complex architecture might be overfitting the data and not generalizing well to unseen houses.
--   Data Format Mismatch (Again): Like MobileNet, InceptionNet is designed for images, not tables. This mismatch might make it difficult to learn effectively from house price data.
--   Training Challenges: Issues like suboptimal settings, inefficient algorithms, or limited training data might have hindered InceptionNet's training process.
+-   **Too Complex for This Task**: InceptionNet's strength in handling complex image patterns might be a weakness here. Its complex architecture might be overfitting the data and not generalizing well to unseen houses.
+-   **Data Format Mismatch (Again)**: Like MobileNet, InceptionNet is designed for images, not tables. This mismatch might make it difficult to learn effectively from house price data.
+-   **Training Challenges**: Issues like suboptimal settings, inefficient algorithms, or limited training data might have hindered InceptionNet's training process.
 
-Deep Learning for House Prices: More Exploration Needed
+***Deep Learning for House Prices: More Exploration Needed***
 
 While InceptionNet didn't perform well, it doesn't mean deep learning can't be useful for house prices. It simply means InceptionNet's architecture might not be the best choice for this specific problem. Further exploration of deep learning models designed for tabular data is needed.
 
@@ -931,9 +930,9 @@ While InceptionNet didn't perform well, it doesn't mean deep learning can't be u
 
 To compare all the models at a glance, we've summarized their key metrics in the table below. Here's what the results reveal:
 
--   Regression vs. Deep Learning: Regression models (especially XGBoost and the Ensemble model) significantly outperformed deep learning models (MobileNet and InceptionNet) in predicting house prices.
--   XGBoost Reigns Supreme: XGBoost achieved the best overall performance with the lowest RMSE (553.30), lowest MAE (333.06), and highest R-squared score (0.8464). This indicates the most accurate predictions and the best explanation of the variation in house prices.
--   Deep Learning Needs Refinement: While MobileNet and InceptionNet showed some potential, their higher errors (RMSE and MAE) and lower R-squared scores suggest they weren't as effective as the regression models for this specific task. This highlights the need for further exploration of deep learning models designed for tabular data like house price information.
+-   **Regression vs. Deep Learning**: Regression models (especially XGBoost and the Ensemble model) significantly outperformed deep learning models (MobileNet and InceptionNet) in predicting house prices.
+-   **XGBoost Reigns Supreme**: XGBoost achieved the best overall performance with the lowest RMSE (553.30), lowest MAE (333.06), and highest R-squared score (0.8464). This indicates the most accurate predictions and the best explanation of the variation in house prices.
+-   **Deep Learning Needs Refinement**: While MobileNet and InceptionNet showed some potential, their higher errors (RMSE and MAE) and lower R-squared scores suggest they weren't as effective as the regression models for this specific task. This highlights the need for further exploration of deep learning models designed for tabular data like house price information.
 <table border="1"> <tr> <td style="background-color: #9ECBFF; font-weight: bold;">Model</td> <td style="background-color: #9ECBFF; font-weight: bold;">RMSE</td> <td style="background-color: #9ECBFF; font-weight: bold;">MAE</td> <td style="background-color: #9ECBFF; font-weight: bold;">R-squared</td> </tr> <tr> <td>Linear Regression</td> <td>1.06e+11</td> <td>6.86e+09</td> <td>-5.65e+21</td> </tr> <tr> <td>Random Forest</td> <td>614.33</td> <td>373.55</td> <td>0.8106</td> </tr> <tr> <td>XGBoost</td> <td>553.30</td> <td>333.06</td> <td>0.8464</td> </tr> <tr> <td>CatBoost</td> <td>582.06</td> <td>363.12</td> <td>0.8300</td> </tr> <tr> <td>Ensemble (XGBoost + CatBoost)</td> <td>557.24</td> <td>340.73</td> <td>0.8442</td> </tr> <tr> <td>Mobile Net</td> <td>1275.25</td> <td>919.14</td> <td>0.2636</td> </tr> <tr> <td>Inception Net</td> <td>1352.12</td> <td>940.56</td> <td>0.1721</td> </tr> </table>
 
 
