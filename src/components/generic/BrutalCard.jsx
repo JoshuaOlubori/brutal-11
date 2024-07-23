@@ -2,7 +2,7 @@
 import colors from './colors.json'; // Assuming colors.json is accessible
 import React, { useState } from 'react';
 
-const BrutalCard = ({ children, colorIndex = 0 }) => {
+const BrutalCard = ({ children, colorIndex = 0, h = 'auto' }) => {
   const [cardStyle, setCardStyle] = useState({
     backgroundColor: colors[colorIndex % colors.length],
     borderRadius: '0.5rem',
@@ -12,6 +12,7 @@ const BrutalCard = ({ children, colorIndex = 0 }) => {
     padding: '1rem',
     transitionDuration: '0.5s',
     animation: 'ease-in-out',
+    height: h
   });
 
   const handleMouseOver = () => {

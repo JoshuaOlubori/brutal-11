@@ -1,6 +1,7 @@
 ---
 import Layout from '@layouts/Default.astro';
 import RecentBlogPosts from '@components/generic/RecentBlogPosts.jsx';
+import Qualifications from '@components/generic/Qualifications/Qualifications.jsx';
 import MobileSocials from '@components/home/MobileSocials.astro';
 import { Hero } from '@components/home/DynamicText';
 // import { Pill } from '@eliancodes/brutal-ui';
@@ -48,8 +49,8 @@ import resume from "../assets/resume.pdf";
   <section id='about' class='grid grid-flow-row sm:grid-cols-3 gap-4 mt-4 justify-stretch'>
     <h2 class='hidden'>About Brutal</h2>
     <div class='sm:col-span-2'>
-      <Card colorIndex={4}>
-        <div class='flex flex-col justify-between items-start gap-4'>
+      <Card colorIndex={4} h={"100%"}>
+        <div class='h-full flex flex-col justify-between items-start gap-4'>
           <Hero client:load></Hero>
           
           <MyButton target={'_blank'} href={resume} tab_bg_color="white">
@@ -73,10 +74,11 @@ import resume from "../assets/resume.pdf";
 </div>
 <div class='sm:col-span-3'>
   <Card colorIndex={4}>
-    <h2 class='sanchez tc0 text-2xl md:text-4xl lg:text-6xl mb-4 dm-serif'>
-      Who am I?
+    <h2 class='sanchez text-center tc0 text-2xl md:text-4xl lg:text-6xl mb-4 dm-serif'>
+      Hi 👋
+I'm Dennis
     </h2>
-    <p class='poppins tc1'>
+    <!-- <p class='poppins tc1'>
      
       I hold a Master's degree in Data Analytics from the<b> University of Bolton</b> 
       and a Bachelor's degree in <em>Materials Engineering</em> from the University of Lagos. 
@@ -85,7 +87,10 @@ import resume from "../assets/resume.pdf";
       for building robust data pipelines and predictive models.
       
     Outside of work, I find enjoyment in playing football to unwind after a long day of debugging.
-    </p>
+
+   
+    </p> -->
+    <Qualifications client:load/>
   </Card>
 </div>
 </section>
