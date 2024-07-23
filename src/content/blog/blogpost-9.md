@@ -1,5 +1,5 @@
 ---
-title: Heart Attack Dashboard
+title: Heart Attack
 description: Health Analytics with Power BI
 pubDate: 04/04/2024 02:19
 author: Dennis Okwechime
