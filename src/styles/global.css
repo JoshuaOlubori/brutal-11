@@ -99,7 +99,10 @@
   color: var(--ccolor-6);
 }
 
-
+/* minor profile image postioning fix */
+.object_position_fix {
+  object-position: 0px 1px;
+}
 
 /* @keyframes glow {
   0% {
