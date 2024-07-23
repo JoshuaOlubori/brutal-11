@@ -6,8 +6,10 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://Dennismain13kini.github.io',
+  base: 'my_portfolio_site',
   // used to generate images
-  site: process.env.VERCEL_ENV === 'production' ? 'https://brutal.elian.codes/' : process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/` : 'https://localhost:3000/',
+  // site: process.env.VERCEL_ENV === 'production' ? 'https://brutal.elian.codes/' : process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/` : 'https://localhost:3000/',
   trailingSlash: 'ignore',
   integrations: [sitemap(), UnoCSS({
     injectReset: true

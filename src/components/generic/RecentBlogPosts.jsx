@@ -105,7 +105,7 @@ const RecentBlogPosts = () => {
       <p className='poppins'>{post.data.description}</p>
 
       <div className="flex justify-end my-4">
-        <BrutalButton href={`/blog/${post.slug}/`}>Read post &rarr;</BrutalButton>
+        <BrutalButton href={`/Dennismain13kini/blog/${post.slug}/`}>Read post &rarr;</BrutalButton>
 
       </div>
 
@@ -115,7 +115,7 @@ const RecentBlogPosts = () => {
           <ul className="flex gap-4 mt-2">
             {post.data.tags.map((tag) => (
               <li key={tag}> {/* Added key for better performance */}
-                <a className="sanchez" href={`/blog/tags/${tag.toLowerCase()}/`}>
+                <a className="sanchez" href={`/Dennismain13kini/blog/tags/${tag.toLowerCase()}/`}>
                   <BrutalPill>{tag}</BrutalPill>
                 </a>
               </li>
