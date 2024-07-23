@@ -12,6 +12,7 @@ import BrutalButton from '@components/generic/BrutalButton';
 import sql from '../../assets/blog_covers/sql.png';
 import avg_pm from  '../../assets/blog_covers/avg-pm2.5.png';
 import retail_screenshot from  '../../assets/blog_covers/retail-screenshot.png';
+import heartAttack from  '../../assets/blog_covers/heart_attack_screenshot.png';
 import aq_trad from  '../../assets/blog_covers/air-quality-trad-models.png'; 
 import houses from '../../assets/blog_covers/netherlands_houses.jpeg'
 import timeSeries from '../../assets/blog_covers/time-series.png';
@@ -23,6 +24,7 @@ import defaultimg from '../../assets/astro.jpeg';
 const imageMap = {
   'sql.png': sql,
   'time-series.png': timeSeries,
+  'heart_attack_screenshot.png': heartAttack,
   'netherlands_houses.jpeg': houses,
   'avg-pm2.5.png': avg_pm,
   'air-quality-trad-models.png': aq_trad,

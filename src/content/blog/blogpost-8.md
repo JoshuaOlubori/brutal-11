@@ -9,7 +9,7 @@ tags:
 img: 'retail-screenshot.png'
 imgUrl: '../../assets/blog_covers/retail-screenshot.png'
 layout: ../../layouts/BlogPost.astro
-category: Script
+category: Viz
 ---
 
 This project is an analysis of a grocery store retail chain using the popular BI tool, Power BI. The report is shown below
