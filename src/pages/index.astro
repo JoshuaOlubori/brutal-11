@@ -75,22 +75,21 @@ import resume from "../assets/resume.pdf";
 <div class='sm:col-span-3'>
   <Card colorIndex={4}>
     <h2 class='sanchez text-center tc0 text-2xl md:text-4xl lg:text-6xl mb-4 dm-serif'>
-      Hi 👋
+      Hi <span class="wave">👋</span>
 I'm Dennis
     </h2>
-    <!-- <p class='poppins tc1'>
-     
-      I hold a Master's degree in Data Analytics from the<b> University of Bolton</b> 
-      and a Bachelor's degree in <em>Materials Engineering</em> from the University of Lagos. 
-      Tools and frameworks in use in my work include machine learning libraries like
-       TensorFlow and PyTorch, 
-      for building robust data pipelines and predictive models.
-      
-    Outside of work, I find enjoyment in playing football to unwind after a long day of debugging.
+    <div class="flex flex-col lg:flex-row lg:justify-center"> 
+      <div class="p-10 lg:poppins tc1 text-lg sm:text-3xl lg:self-center lg:w-2/4 leading-relaxed sm:leading-relaxed">
 
-   
-    </p> -->
+        I hold a Master's degree in Data Analytics from the<b> University of Bolton</b> 
+             and a Bachelor's degree in <em>Materials Engineering</em> from the University of Lagos. 
+             Tools and frameworks in use in my work include machine learning libraries like
+              TensorFlow and PyTorch, 
+             for building robust data pipelines and predictive models.
+             
+           Outside of work, I find enjoyment in playing football to unwind after a long day of debugging.</div>
     <Qualifications client:load/>
+  </div>
   </Card>
 </div>
 </section>
