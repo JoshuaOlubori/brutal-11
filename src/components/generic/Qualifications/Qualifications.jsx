@@ -128,7 +128,7 @@ const Qualifications = () => {
               </div>
 
               <div>
-                <h3 className="qualification__title">Nigeria Head of Operations and Maintenance</h3>
+                <h3 className="qualification__title">Head of Operations and Maintenance</h3>
                 <span className="qualification__subtitle"><em>Just Inc.</em></span>
                 <div className="qualification__calendar">
                   <i className="uil uil-calendar-alt"></i> Dec 2019- Apr 2020
@@ -141,7 +141,7 @@ const Qualifications = () => {
             <div className="qualification__data">
               <div>
                 <h3 className="qualification__title">Undergraduate Researcher</h3>
-                <span className="qualification__subtitle"><em>Nigeria Railway Corporation</em></span>
+                <span className="qualification__subtitle"><em>Railway Corporation</em></span>
                 <div className="qualification__calendar">
                   <i className="uil uil-calendar-alt"></i> Jun 2018 - Nov 2018
                 </div>
